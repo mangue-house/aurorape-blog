@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Aurora PE{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Jornalismo independente de Pernambuco{% endblock %}" />
+
+  {% block og_tags %}
+  <meta property="og:site_name" content="Aurora PE" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{% block og_title %}Aurora PE{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}Jornalismo independente de Pernambuco{% endblock %}" />
+  <meta property="og:image" content="{% block og_image %}{{ request.url_for('static', path='images/og-default.jpg') }}{% endblock %}" />
+  <meta property="og:url" content="{{ request.url }}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  {% endblock %}
+
+  <link rel="icon" href="{{ request.url_for('static', path='images/favicon.ico') }}" />
+  <link rel="stylesheet" href="{{ request.url_for('static', path='css/main.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% include "components/header.html" %}
+
+<main id="main-content" tabindex="-1">
+  {% block content %}{% endblock %}
+</main>
+
+{% include "components/footer.html" %}
+
+<script src="{{ request.url_for('static', path='js/htmx.min.js') }}" defer></script>
+<script src="{{ request.url_for('static', path='js/app.js') }}" defer></script>
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

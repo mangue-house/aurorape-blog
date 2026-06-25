@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }} — Aurora PE{% endblock %}
+{% block meta_description %}{{ article.subtitle or article.title }}{% endblock %}
+
+{% block og_title %}{{ article.title }}{% endblock %}
+{% block og_description %}{{ article.subtitle or '' }}{% endblock %}
+{% block og_image %}{{ article.featured_image_url or super() }}{% endblock %}
+
+{% block content %}
+<div class="container article-page">
+  <div style="max-width:var(--max-reading-width);margin-inline:auto;">
+
+    {# Cabeçalho do artigo #}
+    <header class="article-header">
+      {% if article.chapeu %}
+      <span class="chapeu">
+        <a href="/categoria/{{ article.category.slug }}" style="color:var(--color-accent);">
+          {{ article.chapeu }}
+        </a>
+      </span>
+      {% endif %}
+
+      <h1 class="article-title">{{ article.title }}</h1>
+
+      {% if article.subtitle %}
+      <p class="article-subtitle">{{ article.subtitle }}</p>
+      {% endif %}
+
+      <div class="article-meta">
+        <span>
+          Por <a href="/autor/{{ article.author.slug }}" class="article-meta__author">{{ article.author.name }}</a>
+        </span>
+        <time datetime="{{ article.published_at.isoformat() if article.published_at else '' }}">
+          {{ article.published_at | strftime('%d de %B de %Y') if article.published_at else '' }}
+        </time>
+        {% if article.reading_time_min %}
+        <span>{{ article.reading_time_min }} min de leitura</span>
+        {% endif %}
+
+        {# Controles de fonte #}
+        <div class="font-controls" style="margin-left:auto;">
+          <button class="font-btn" id="font-decrease" aria-label="Diminuir fonte" title="Diminuir fonte">A-</button>
+          <button class="font-btn" id="font-increase" aria-label="Aumentar fonte" title="Aumentar fonte">A+</button>
+        </div>
+      </div>
+    </header>
+
+    {# Imagem de destaque #}
+    {% if article.featured_image_url %}
+    <img
+      class="article-featured-image"
+      src="{{ article.featured_image_url }}"
+      alt="{{ article.title }}"
+      loading="eager"
+    />
+    {% endif %}
+
+    {# Barra de compartilhamento (topo) #}
+    <div class="share-bar" aria-label="Compartilhar">
+      <span class="share-bar__label">Compartilhar</span>
+      <a class="share-btn"
+         href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ article.title | urlencode }}"
+         target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no X/Twitter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        <span class="share-btn__label">X</span>
+      </a>
+      <a class="share-btn"
+         href="https://www.facebook.com/sharer/sharer.php?u={{ request.url | urlencode }}"
+         target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no Facebook">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+        <span class="share-btn__label">Facebook</span>
+      </a>
+      <a class="share-btn"
+         href="https://wa.me/?text={{ article.title | urlencode }}%20{{ request.url | urlencode }}"
+         target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no WhatsApp">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+        </svg>
+        <span class="share-btn__label">WhatsApp</span>
+      </a>
+      <button class="share-btn" data-copy aria-label="Copiar link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span class="share-btn__label">Copiar link</span>
+      </button>
+    </div>
+
+    {# Corpo do artigo #}
+    <div class="article-body" id="article-body">
+      {{ article.body | safe }}
+    </div>
+
+    {# Tags #}
+    {% if article.tags %}
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:2rem;">
+      {% for tag in article.tags %}
+      <span style="background:var(--color-bg);border:1.5px solid var(--color-border);border-radius:999px;padding:0.25rem 0.75rem;font-size:0.8rem;color:var(--color-muted);">
+        #{{ tag.name }}
+      </span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Barra de compartilhamento (rodapé) #}
+    <div class="share-bar mt-4" aria-label="Compartilhar" aria-hidden="true">
+      <span class="share-bar__label">Gostou? Compartilhe</span>
+      <a class="share-btn"
+         href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ article.title | urlencode }}"
+         target="_blank" rel="noopener noreferrer">X</a>
+      <a class="share-btn"
+         href="https://wa.me/?text={{ article.title | urlencode }}%20{{ request.url | urlencode }}"
+         target="_blank" rel="noopener noreferrer">WhatsApp</a>
+    </div>
+
+    {# Autor #}
+    <div style="display:flex;gap:1.25rem;align-items:flex-start;padding:1.5rem;background:var(--color-bg);border-radius:8px;border:1px solid var(--color-border);margin-top:2rem;">
+      {% if article.author.photo_url %}
+      <img src="{{ article.author.photo_url }}" alt="{{ article.author.name }}"
+           style="width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;" />
+      {% endif %}
+      <div>
+        <p style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-muted);margin-bottom:0.25rem;">Autor</p>
+        <a href="/autor/{{ article.author.slug }}" style="font-family:var(--font-headline);font-size:1.05rem;font-weight:700;">
+          {{ article.author.name }}
+        </a>
+        {% if article.author.bio %}
+        <p style="font-size:0.875rem;color:var(--color-muted);margin-top:0.375rem;line-height:1.55;">
+          {{ article.author.bio }}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>{# end max-width wrapper #}
+
+  {# Conteúdo relacionado #}
+  {% if related %}
+  <div class="related-articles">
+    <h2 class="section-title">Leia também</h2>
+    <div class="secondary-grid">
+      {% for article in related %}
+        {% include "components/article_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {# Newsletter inline #}
+  <div class="mt-6">
+    <div class="newsletter-block">
+      <h2>Não perca nada do Aurora PE</h2>
+      <p>Assine nossa newsletter e receba as melhores reportagens.</p>
+      <form
+        class="newsletter-form"
+        hx-post="/newsletter"
+        hx-target="#newsletter-article-feedback"
+        hx-swap="innerHTML"
+        hx-on::after-request="this.reset()"
+      >
+        <input type="email" name="email" placeholder="seu@email.com" required aria-label="Seu e-mail" />
+        <button type="submit">Assinar</button>
+      </form>
+      <div id="newsletter-article-feedback" aria-live="polite"></div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

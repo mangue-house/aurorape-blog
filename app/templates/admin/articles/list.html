@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}Artigos{% endblock %}
+
+{% block content %}
+<div class="admin-topbar">
+  <h1>Artigos</h1>
+  <a href="/admin/artigos/novo" class="btn-primary">+ Novo artigo</a>
+</div>
+
+<div class="card">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>Categoria</th>
+        <th>Status</th>
+        <th>Data</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in articles %}
+      <tr id="article-row-{{ article.id }}">
+        <td>
+          <a href="/admin/artigos/{{ article.id }}/editar" style="font-weight:600;">{{ article.title }}</a>
+        </td>
+        <td>{{ article.author.name }}</td>
+        <td>{{ article.category.name }}</td>
+        <td>
+          {% if article.is_published %}
+          <span class="badge badge-green">Publicado</span>
+          {% else %}
+          <span class="badge badge-gray">Rascunho</span>
+          {% endif %}
+        </td>
+        <td>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '—' }}</td>
+        <td style="display:flex;gap:0.5rem;">
+          <a href="/artigo/{{ article.slug }}" target="_blank" class="share-btn" style="font-size:0.8rem;">Ver</a>
+          <button
+            class="btn-danger"
+            hx-delete="/admin/artigos/{{ article.id }}"
+            hx-target="#article-row-{{ article.id }}"
+            hx-swap="outerHTML"
+            hx-confirm="Excluir '{{ article.title }}'?"
+          >
+            Excluir
+          </button>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" style="text-align:center;color:var(--color-muted);padding:2rem;">
+          Nenhum artigo cadastrado ainda.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

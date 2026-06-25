@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin{% endblock %} — Aurora PE</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='css/main.css') }}" />
+</head>
+<body>
+<div class="admin-layout">
+
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__logo">Aurora PE</div>
+    <nav class="admin-nav" aria-label="Menu admin">
+      <a href="/admin/"
+         {% if request.url.path == '/admin/' %}aria-current="page"{% endif %}>
+        📊 Dashboard
+      </a>
+      <a href="/admin/artigos"
+         {% if '/admin/artigos' in request.url.path %}aria-current="page"{% endif %}>
+        📝 Artigos
+      </a>
+      <a href="/admin/autores"
+         {% if '/admin/autores' in request.url.path %}aria-current="page"{% endif %}>
+        👤 Autores
+      </a>
+      <a href="/admin/categorias"
+         {% if '/admin/categorias' in request.url.path %}aria-current="page"{% endif %}>
+        🏷️ Categorias
+      </a>
+      <a href="/" target="_blank" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.75rem;margin-top:1rem;">
+        🌐 Ver site
+      </a>
+      <a href="/admin/logout">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+<script src="{{ request.url_for('static', path='js/htmx.min.js') }}" defer></script>
+</body>
+</html>

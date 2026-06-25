@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Aurora PE Admin</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='css/main.css') }}" />
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <h1>Aurora PE</h1>
+    <p>Painel administrativo</p>
+
+    {% if error %}
+    <div class="alert-error" role="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/admin/login">
+      <div class="form-group">
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" type="email" id="email" name="email" required autofocus />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Senha</label>
+        <input class="form-control" type="password" id="password" name="password" required />
+      </div>
+      <button type="submit" class="btn-primary w-full" style="width:100%;padding:0.7rem;">
+        Entrar
+      </button>
+    </form>
+  </div>
+</body>
+</html>

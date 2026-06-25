@@ -1,0 +1,26 @@
+{% if episodes %}
+<section class="py-4" aria-label="Podcast">
+  <h2 class="section-title">Podcast</h2>
+  <div class="card" style="padding:1.5rem;">
+    {% set latest = episodes[0] %}
+    <p class="chapeu">Último episódio</p>
+    <h3 style="font-family:var(--font-headline);font-size:1.15rem;margin-bottom:0.75rem;">
+      {{ latest.title }}
+    </h3>
+    <audio controls style="width:100%;margin-bottom:1.25rem;" preload="none">
+      <source src="{{ latest.audio_url }}" type="audio/mpeg" />
+      Seu navegador não suporta o player de áudio.
+    </audio>
+    {% if episodes|length > 1 %}
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;">
+      {% for ep in episodes[1:4] %}
+      <li style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-top:1px solid var(--color-border);font-size:0.875rem;">
+        <span>{{ ep.title }}</span>
+        <a href="{{ ep.audio_url }}" style="color:var(--color-secondary);font-weight:600;" download>Baixar</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</section>
+{% endif %}

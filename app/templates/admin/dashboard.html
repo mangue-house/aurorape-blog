@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-topbar">
+  <h1>Dashboard</h1>
+  <span style="font-size:0.875rem;color:var(--color-muted);">Olá, {{ user.email }}</span>
+</div>
+
+<div style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:2rem;">
+  <div class="card" style="padding:1.5rem;text-align:center;">
+    <div style="font-size:2rem;font-weight:700;color:var(--color-secondary);">{{ total_articles }}</div>
+    <div style="font-size:0.875rem;color:var(--color-muted);margin-top:0.25rem;">Total de artigos</div>
+  </div>
+  <div class="card" style="padding:1.5rem;text-align:center;">
+    <div style="font-size:2rem;font-weight:700;color:#16a34a;">{{ total_published }}</div>
+    <div style="font-size:0.875rem;color:var(--color-muted);margin-top:0.25rem;">Publicados</div>
+  </div>
+  <div class="card" style="padding:1.5rem;text-align:center;">
+    <div style="font-size:2rem;font-weight:700;color:var(--color-accent);">{{ total_authors }}</div>
+    <div style="font-size:0.875rem;color:var(--color-muted);margin-top:0.25rem;">Autores</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--color-border);display:flex;justify-content:space-between;align-items:center;">
+    <h2 style="font-size:1rem;font-weight:600;">Últimos artigos</h2>
+    <a href="/admin/artigos/novo" class="btn-primary">+ Novo artigo</a>
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>Categoria</th>
+        <th>Status</th>
+        <th>Data</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in recent %}
+      <tr>
+        <td>
+          <a href="/admin/artigos/{{ article.id }}/editar" style="font-weight:600;">{{ article.title }}</a>
+        </td>
+        <td>{{ article.author.name }}</td>
+        <td>{{ article.category.name }}</td>
+        <td>
+          {% if article.is_published %}
+          <span class="badge badge-green">Publicado</span>
+          {% else %}
+          <span class="badge badge-gray">Rascunho</span>
+          {% endif %}
+        </td>
+        <td>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} — Aurora PE{% endblock %}
+{% block meta_description %}Todas as matérias de {{ category.name }} no Aurora PE.{% endblock %}
+
+{% block content %}
+<div class="container py-6">
+  <header style="margin-bottom:2rem;">
+    <span class="chapeu">Editoria</span>
+    <h1 style="font-family:var(--font-headline);font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-top:0.5rem;">
+      {{ category.name }}
+    </h1>
+    {% if category.description %}
+    <p style="color:var(--color-muted);margin-top:0.75rem;">{{ category.description }}</p>
+    {% endif %}
+  </header>
+
+  {% if articles %}
+  <div class="feed" id="category-feed">
+    {% for article in articles %}
+    <article class="feed-item">
+      <div class="feed-item__body">
+        <h2 class="feed-item__title">
+          <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+        </h2>
+        {% if article.subtitle %}
+        <p class="feed-item__excerpt">{{ article.subtitle }}</p>
+        {% endif %}
+        <div class="feed-item__meta">
+          <span>{{ article.author.name }}</span>
+          <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
+          {% if article.reading_time_min %}
+          <span>{{ article.reading_time_min }} min</span>
+          {% endif %}
+        </div>
+      </div>
+      {% if article.featured_image_url %}
+      <div class="feed-item__image">
+        <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+          <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+        </a>
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+
+  {# Paginação #}
+  <div style="display:flex;justify-content:center;gap:1rem;margin-top:2.5rem;">
+    {% if page > 1 %}
+    <a href="/categoria/{{ category.slug }}?page={{ page - 1 }}" class="btn-subscribe" style="background:var(--color-primary);">
+      ← Anterior
+    </a>
+    {% endif %}
+    {% if articles | length >= 12 %}
+    <a href="/categoria/{{ category.slug }}?page={{ page + 1 }}" class="btn-subscribe" style="background:var(--color-primary);">
+      Próxima →
+    </a>
+    {% endif %}
+  </div>
+
+  {% else %}
+  <p style="color:var(--color-muted);text-align:center;padding:3rem 0;">
+    Nenhuma matéria encontrada nesta editoria.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

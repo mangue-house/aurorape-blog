@@ -1,0 +1,31 @@
+{% if hero %}
+<section class="hero" aria-label="Destaque principal">
+  <div class="hero__image-wrap">
+    <a href="/artigo/{{ hero.slug }}" tabindex="-1" aria-hidden="true">
+      <img
+        src="{{ hero.featured_image_url or '' }}"
+        alt="{{ hero.title }}"
+        loading="eager"
+      />
+    </a>
+  </div>
+  <div class="hero__content">
+    {% if hero.chapeu %}
+    <span class="chapeu">{{ hero.chapeu }}</span>
+    {% endif %}
+    <h1 class="hero__title">
+      <a href="/artigo/{{ hero.slug }}">{{ hero.title }}</a>
+    </h1>
+    {% if hero.subtitle %}
+    <p class="hero__subtitle">{{ hero.subtitle }}</p>
+    {% endif %}
+    <div class="hero__meta">
+      <a href="/autor/{{ hero.author.slug }}">{{ hero.author.name }}</a>
+      <span>{{ hero.published_at | strftime('%d de %B de %Y') if hero.published_at else '' }}</span>
+      {% if hero.reading_time_min %}
+      <span>{{ hero.reading_time_min }} min</span>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}

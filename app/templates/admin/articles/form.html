@@ -1,0 +1,100 @@
+{% extends "admin/base.html" %}
+{% block title %}{% if article %}Editar artigo{% else %}Novo artigo{% endif %}{% endblock %}
+
+{% block content %}
+<div class="admin-topbar">
+  <h1>{% if article %}Editar: {{ article.title }}{% else %}Novo artigo{% endif %}</h1>
+  <a href="/admin/artigos" style="color:var(--color-muted);font-size:0.875rem;">← Voltar</a>
+</div>
+
+<div class="card" style="padding:1.5rem;">
+  <form
+    method="post"
+    action="{% if article %}/admin/artigos/{{ article.id }}/editar{% else %}/admin/artigos{% endif %}"
+  >
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="title">Título *</label>
+        <input class="form-control" type="text" id="title" name="title"
+               value="{{ article.title if article else '' }}" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="slug">Slug *</label>
+        <input class="form-control" type="text" id="slug" name="slug"
+               value="{{ article.slug if article else '' }}" required />
+        <p class="form-hint">Ex: minha-materia-sobre-x</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="chapeu">Chapéu (editoria)</label>
+        <input class="form-control" type="text" id="chapeu" name="chapeu"
+               value="{{ article.chapeu if article else '' }}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="subtitle">Subtítulo</label>
+        <input class="form-control" type="text" id="subtitle" name="subtitle"
+               value="{{ article.subtitle if article else '' }}" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="body">Corpo do artigo * (HTML permitido)</label>
+      <textarea class="form-control" id="body" name="body" required>{{ article.body if article else '' }}</textarea>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="featured_image_url">URL da imagem de destaque</label>
+        <input class="form-control" type="url" id="featured_image_url" name="featured_image_url"
+               value="{{ article.featured_image_url if article else '' }}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="reading_time_min">Tempo de leitura (min)</label>
+        <input class="form-control" type="number" id="reading_time_min" name="reading_time_min"
+               value="{{ article.reading_time_min if article else 1 }}" min="1" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="author_id">Autor *</label>
+        <select class="form-control" id="author_id" name="author_id" required>
+          {% for author in authors %}
+          <option value="{{ author.id }}"
+            {% if article and article.author_id == author.id %}selected{% endif %}>
+            {{ author.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="category_id">Categoria *</label>
+        <select class="form-control" id="category_id" name="category_id" required>
+          {% for cat in categories %}
+          <option value="{{ cat.id }}"
+            {% if article and article.category_id == cat.id %}selected{% endif %}>
+            {{ cat.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
+      <input type="checkbox" id="is_published" name="is_published" value="true"
+             {% if article and article.is_published %}checked{% endif %}
+             style="width:18px;height:18px;cursor:pointer;" />
+      <label for="is_published" style="font-weight:600;cursor:pointer;">Publicar agora</label>
+    </div>
+
+    <div style="display:flex;gap:1rem;margin-top:1rem;">
+      <button type="submit" class="btn-primary">
+        {% if article %}Salvar alterações{% else %}Criar artigo{% endif %}
+      </button>
+      <a href="/admin/artigos" style="color:var(--color-muted);padding:0.5rem 1rem;font-size:0.875rem;">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Aurora PE — Jornalismo independente de Pernambuco{% endblock %}
+{% block meta_description %}O melhor do jornalismo pernambucano.{% endblock %}
+
+{% block content %}
+<div class="container py-6">
+
+  {# Destaque principal #}
+  {% include "components/hero.html" %}
+
+  {# Subdestaques #}
+  {% if secondary %}
+  <section class="mt-6" aria-label="Subdestaques">
+    <h2 class="section-title">Destaques</h2>
+    <div class="secondary-grid">
+      {% for article in secondary %}
+        {% include "components/article_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {# Feed principal + sidebar #}
+  <div class="mt-6" style="display:grid;gap:3rem;grid-template-columns:1fr;">
+    <style>@media(min-width:1024px){.home-grid{grid-template-columns:1fr 300px!important}}</style>
+    <div class="home-grid" style="display:grid;gap:3rem;grid-template-columns:1fr;">
+
+      {# Feed cronológico #}
+      <section aria-label="Últimas notícias">
+        <h2 class="section-title">Últimas notícias</h2>
+        <div class="feed" id="feed">
+          {% for article in feed %}
+          <article class="feed-item">
+            <div class="feed-item__body">
+              {% if article.chapeu %}
+              <span class="chapeu">{{ article.chapeu }}</span>
+              {% endif %}
+              <h3 class="feed-item__title">
+                <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+              </h3>
+              {% if article.subtitle %}
+              <p class="feed-item__excerpt">{{ article.subtitle }}</p>
+              {% endif %}
+              <div class="feed-item__meta">
+                <span>{{ article.author.name }}</span>
+                <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
+                {% if article.reading_time_min %}
+                <span>{{ article.reading_time_min }} min</span>
+                {% endif %}
+              </div>
+            </div>
+            {% if article.featured_image_url %}
+            <div class="feed-item__image">
+              <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+                <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+              </a>
+            </div>
+            {% endif %}
+          </article>
+          {% endfor %}
+        </div>
+
+        {# Load more via HTMX #}
+        {% if feed | length >= 10 %}
+        <div class="text-center mt-4">
+          <button
+            class="btn-subscribe"
+            hx-get="/?page=2"
+            hx-target="#feed"
+            hx-swap="beforeend"
+            hx-indicator="#load-spinner"
+            style="background:var(--color-primary);"
+          >
+            Carregar mais
+          </button>
+          <span id="load-spinner" class="htmx-indicator" style="margin-left:0.75rem;color:var(--color-muted);">
+            Carregando...
+          </span>
+        </div>
+        {% endif %}
+      </section>
+
+      {# Sidebar #}
+      <aside aria-label="Conteúdo complementar">
+        {% include "components/podcast_player.html" %}
+
+        <div class="mt-4">
+          <h2 class="section-title">Editorias</h2>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;">
+            {% for cat in categories %}
+            <li>
+              <a href="/categoria/{{ cat.slug }}"
+                 style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border);font-weight:500;color:var(--color-text);">
+                {{ cat.name }}
+                <span style="color:var(--color-secondary);">→</span>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  {# Newsletter #}
+  <section class="mt-6" aria-label="Newsletter">
+    <div class="newsletter-block">
+      <h2>Receba o Aurora PE na sua caixa de entrada</h2>
+      <p>A newsletter diária com o melhor do jornalismo pernambucano.</p>
+      <form
+        class="newsletter-form"
+        hx-post="/newsletter"
+        hx-target="#newsletter-feedback"
+        hx-swap="innerHTML"
+        hx-on::after-request="this.reset()"
+      >
+        <input type="email" name="email" placeholder="seu@email.com" required aria-label="Seu e-mail" />
+        <button type="submit">Assinar</button>
+      </form>
+      <div id="newsletter-feedback" aria-live="polite"></div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

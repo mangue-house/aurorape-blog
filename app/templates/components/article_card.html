@@ -1,0 +1,25 @@
+<article class="article-card">
+  {% if article.featured_image_url %}
+  <div class="article-card__image">
+    <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+      <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+    </a>
+  </div>
+  {% endif %}
+
+  {% if article.chapeu %}
+  <span class="chapeu">{{ article.chapeu }}</span>
+  {% endif %}
+
+  <h3 class="article-card__title">
+    <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+  </h3>
+
+  <p class="article-card__meta">
+    <span>{{ article.author.name }}</span> &middot;
+    <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
+    {% if article.reading_time_min %}
+    &middot; <span>{{ article.reading_time_min }} min de leitura</span>
+    {% endif %}
+  </p>
+</article>
