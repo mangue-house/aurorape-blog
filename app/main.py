@@ -6,14 +6,18 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import MOCK_MODE
 from app.database import engine
 from app.models import *  # noqa: F401,F403 — garante registro dos modelos
 from app.routers.public import router as public_router
 from app.routers.admin import router as admin_router
+from app.mock_seed import seed_mock_data
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if MOCK_MODE:
+        await seed_mock_data()
     yield
     await engine.dispose()
 
