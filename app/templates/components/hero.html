@@ -1,31 +1,75 @@
 {% if hero %}
-<section class="hero" aria-label="Destaque principal">
-  <div class="hero__image-wrap">
-    <a href="/artigo/{{ hero.slug }}" tabindex="-1" aria-hidden="true">
-      <img
-        src="{{ hero.featured_image_url or '' }}"
-        alt="{{ hero.title }}"
-        loading="eager"
-      />
-    </a>
-  </div>
-  <div class="hero__content">
-    {% if hero.chapeu %}
-    <span class="chapeu">{{ hero.chapeu }}</span>
-    {% endif %}
-    <h1 class="hero__title">
-      <a href="/artigo/{{ hero.slug }}">{{ hero.title }}</a>
-    </h1>
-    {% if hero.subtitle %}
-    <p class="hero__subtitle">{{ hero.subtitle }}</p>
-    {% endif %}
-    <div class="hero__meta">
-      <a href="/autor/{{ hero.author.slug }}">{{ hero.author.name }}</a>
-      <span>{{ hero.published_at | strftime('%d de %B de %Y') if hero.published_at else '' }}</span>
-      {% if hero.reading_time_min %}
-      <span>{{ hero.reading_time_min }} min</span>
-      {% endif %}
+{# Monta lista de slides: hero + até 2 de secondary #}
+{% set ns = namespace(slides=[hero]) %}
+{% if secondary is defined and secondary %}
+  {% for art in secondary[:2] %}
+    {% set ns.slides = ns.slides + [art] %}
+  {% endfor %}
+{% endif %}
+
+<div class="hero-carousel" id="hero-carousel"
+     aria-label="Destaques" aria-roledescription="carrossel">
+
+  <div class="hero-carousel__track" id="hero-carousel-track">
+    {% for art in ns.slides %}
+    <div class="hero-carousel__slide"
+         role="group" aria-roledescription="slide"
+         aria-label="{{ loop.index }} de {{ ns.slides | length }}"
+         {% if not loop.first %}aria-hidden="true"{% endif %}>
+      <a href="/artigo/{{ art.slug }}" class="hero-overlay"
+         tabindex="{{ '0' if loop.first else '-1' }}">
+        {% if art.featured_image_url %}
+        <img class="hero-overlay__img"
+             src="{{ art.featured_image_url }}"
+             alt="{{ art.title }}"
+             loading="{{ 'eager' if loop.first else 'lazy' }}" />
+        {% endif %}
+        <div class="hero-overlay__content">
+          {% if art.chapeu %}
+          <span class="hero-overlay__chapeu">{{ art.chapeu }}</span>
+          {% endif %}
+          <h2 class="hero-overlay__title">{{ art.title }}</h2>
+          <div class="hero-overlay__meta">
+            <span>{{ art.author.name }}</span>
+            <span>{{ art.published_at | strftime('%d de %B de %Y') if art.published_at else '' }}</span>
+            {% if art.reading_time_min %}
+            <span>{{ art.reading_time_min }} min de leitura</span>
+            {% endif %}
+          </div>
+        </div>
+      </a>
     </div>
+    {% endfor %}
   </div>
-</section>
+
+  {% if ns.slides | length > 1 %}
+  {# Botões prev/next #}
+  <button class="hero-carousel__btn hero-carousel__btn--prev" aria-label="Slide anterior">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+         stroke-linejoin="round" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+  </button>
+  <button class="hero-carousel__btn hero-carousel__btn--next" aria-label="Próximo slide">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+         stroke-linejoin="round" aria-hidden="true">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </button>
+
+  {# Dots #}
+  <div class="hero-carousel__dots" role="tablist" aria-label="Navegação de slides">
+    {% for art in ns.slides %}
+    <button class="hero-carousel__dot{% if loop.first %} is-active{% endif %}"
+            role="tab"
+            aria-selected="{{ 'true' if loop.first else 'false' }}"
+            aria-label="Slide {{ loop.index }}: {{ art.title }}">
+    </button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
 {% endif %}

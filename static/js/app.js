@@ -60,16 +60,78 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Hero carousel
+  (function () {
+    const carousel = document.getElementById("hero-carousel");
+    if (!carousel) return;
+
+    const track = document.getElementById("hero-carousel-track");
+    const slides = carousel.querySelectorAll(".hero-carousel__slide");
+    const dots = carousel.querySelectorAll(".hero-carousel__dot");
+    const btnPrev = carousel.querySelector(".hero-carousel__btn--prev");
+    const btnNext = carousel.querySelector(".hero-carousel__btn--next");
+    const total = slides.length;
+    if (total <= 1) return;
+
+    let current = 0;
+    let timer = null;
+    const INTERVAL = 4000;
+
+    function goTo(idx) {
+      slides[current].setAttribute("aria-hidden", "true");
+      slides[current].querySelector("a").setAttribute("tabindex", "-1");
+      dots[current].classList.remove("is-active");
+      dots[current].setAttribute("aria-selected", "false");
+
+      current = (idx + total) % total;
+      track.style.transform = `translateX(-${current * 100}%)`;
+
+      slides[current].removeAttribute("aria-hidden");
+      slides[current].querySelector("a").setAttribute("tabindex", "0");
+      dots[current].classList.add("is-active");
+      dots[current].setAttribute("aria-selected", "true");
+    }
+
+    function startTimer() {
+      clearInterval(timer); // sempre limpa antes de criar novo
+      timer = setInterval(() => goTo(current + 1), INTERVAL);
+    }
+
+    btnNext?.addEventListener("click", () => { goTo(current + 1); startTimer(); });
+    btnPrev?.addEventListener("click", () => { goTo(current - 1); startTimer(); });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => { goTo(i); startTimer(); });
+    });
+
+    // Pausa ao hover — retoma com intervalo limpo
+    carousel.addEventListener("mouseenter", () => clearInterval(timer));
+    carousel.addEventListener("mouseleave", () => startTimer());
+
+    // Swipe support
+    let touchStartX = 0;
+    carousel.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    carousel.addEventListener("touchend", (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) { goTo(diff > 0 ? current + 1 : current - 1); resetTimer(); }
+    }, { passive: true });
+
+    // Keyboard
+    carousel.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") { goTo(current + 1); resetTimer(); }
+      if (e.key === "ArrowLeft")  { goTo(current - 1); resetTimer(); }
+    });
+
+    startTimer();
+  })();
+
   // Copy link share button
-  document.querySelectorAll(".share-btn[data-copy]").forEach((btn) => {
+  document.querySelectorAll(".share-btn[data-copy], .piaui-share__btn[data-copy]").forEach((btn) => {
     btn.addEventListener("click", () => {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        const label = btn.querySelector(".share-btn__label");
-        if (label) {
-          const original = label.textContent;
-          label.textContent = "Copiado!";
-          setTimeout(() => (label.textContent = original), 2000);
-        }
+        const original = btn.getAttribute("aria-label");
+        btn.setAttribute("aria-label", "Copiado!");
+        setTimeout(() => btn.setAttribute("aria-label", original), 2000);
       });
     });
   });

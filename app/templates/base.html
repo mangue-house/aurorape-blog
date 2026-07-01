@@ -16,7 +16,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   {% endblock %}
 
-  <link rel="icon" href="{{ request.url_for('static', path='images/favicon.ico') }}" />
+  <link rel="icon" href="{{ request.url_for('static', path='images/logo.avif') }}" type="image/avif" />
+  <link rel="shortcut icon" href="{{ request.url_for('static', path='images/logo.avif') }}" />
   <link rel="stylesheet" href="{{ request.url_for('static', path='css/main.css') }}" />
   {% block extra_head %}{% endblock %}
 </head>

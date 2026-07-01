@@ -1,3 +1,63 @@
+{% if card_variant == 'featured' %}
+<article class="featured-card">
+  {% if article.featured_image_url %}
+  <div class="featured-card__image">
+    <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+      <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+    </a>
+  </div>
+  {% endif %}
+  {% if article.chapeu %}
+  <span class="chapeu featured-card__chapeu">{{ article.chapeu }}</span>
+  {% endif %}
+  <h3 class="featured-card__title">
+    <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+  </h3>
+  <p class="featured-card__meta">
+    {{ article.author.name }} &middot;
+    {{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}
+  </p>
+</article>
+
+{% elif card_variant == 'editorial' %}
+<article class="card-editorial">
+  {% if article.featured_image_url %}
+  <div class="card-editorial__image">
+    <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+      <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+    </a>
+  </div>
+  {% endif %}
+  {% if article.chapeu %}
+  <span class="chapeu">{{ article.chapeu }}</span>
+  {% endif %}
+  <h3 class="card-editorial__title">
+    <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+  </h3>
+  {% if article.subtitle %}
+  <p class="card-editorial__subtitle">{{ article.subtitle }}</p>
+  {% endif %}
+  <p class="card-editorial__meta">
+    {{ article.author.name }} &middot;
+    {{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}
+  </p>
+</article>
+
+{% elif card_variant == 'compact' %}
+<article class="card-compact">
+  {% if article.chapeu %}
+  <span class="chapeu">{{ article.chapeu }}</span>
+  {% endif %}
+  <h3 class="card-compact__title">
+    <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+  </h3>
+  <p class="card-compact__meta">
+    {{ article.author.name }} &middot;
+    {{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}
+  </p>
+</article>
+
+{% else %}
 <article class="article-card">
   {% if article.featured_image_url %}
   <div class="article-card__image">
@@ -23,3 +83,4 @@
     {% endif %}
   </p>
 </article>
+{% endif %}

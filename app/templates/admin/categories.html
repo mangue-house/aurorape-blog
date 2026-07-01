@@ -3,56 +3,92 @@
 
 {% block content %}
 <div class="admin-topbar">
-  <h1>Categorias</h1>
+  <div>
+    <p class="admin-topbar__breadcrumb">Admin / Cadastros</p>
+    <h1>Categorias</h1>
+  </div>
 </div>
 
-<div style="display:grid;gap:2rem;grid-template-columns:1fr 360px;">
+<div class="admin-body">
+<div class="card">
 
-  <div class="card">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Slug</th>
-          <th>Descrição</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for cat in categories %}
-        <tr>
-          <td style="font-weight:600;">{{ cat.name }}</td>
-          <td style="color:var(--color-muted);">{{ cat.slug }}</td>
-          <td style="font-size:0.875rem;color:var(--color-muted);">{{ cat.description or '—' }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td colspan="3" style="text-align:center;color:var(--color-muted);padding:2rem;">
-            Nenhuma categoria cadastrada.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card" style="padding:1.5rem;align-self:start;">
-    <h2 style="font-size:1rem;font-weight:600;margin-bottom:1.25rem;">Nova categoria</h2>
-    <form method="post" action="/admin/categorias">
-      <div class="form-group">
-        <label class="form-label" for="name">Nome *</label>
-        <input class="form-control" type="text" id="name" name="name" required />
+  {# ── Inline create ── #}
+  <form method="post" action="/admin/categorias">
+    <div class="inline-create">
+      <div class="form-group" style="flex:1.5;">
+        <label class="form-label" for="name">Nome</label>
+        <input class="form-control" type="text" id="name" name="name"
+               placeholder="Ex: Política, Cultura" required autocomplete="off" />
       </div>
-      <div class="form-group">
-        <label class="form-label" for="slug">Slug *</label>
-        <input class="form-control" type="text" id="slug" name="slug" required />
+      <div class="form-group" style="flex:1;">
+        <label class="form-label" for="slug">Slug <span class="form-hint">auto</span></label>
+        <input class="form-control" type="text" id="slug" name="slug"
+               placeholder="politica" />
       </div>
-      <div class="form-group">
+      <div class="form-group" style="flex:2;">
         <label class="form-label" for="description">Descrição</label>
-        <textarea class="form-control" id="description" name="description" style="min-height:70px;"></textarea>
+        <input class="form-control" type="text" id="description" name="description"
+               placeholder="Breve descrição…" />
       </div>
-      <button type="submit" class="btn-primary">Criar categoria</button>
-    </form>
-  </div>
+      <div style="padding-bottom:0.05rem;">
+        <label class="form-label" style="visibility:hidden;">Criar</label>
+        <button type="submit" class="btn-primary" style="white-space:nowrap;">+ Criar</button>
+      </div>
+    </div>
+  </form>
 
+  {# ── Lista ── #}
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Slug</th>
+        <th>Descrição</th>
+        <th style="width:100px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cat in categories %}
+      <tr id="cat-row-{{ cat.id }}">
+        <td>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <span style="width:8px;height:8px;border-radius:50%;background:var(--color-secondary);flex-shrink:0;display:inline-block;"></span>
+            <span style="font-weight:600;color:rgba(255,255,255,0.88);">{{ cat.name }}</span>
+          </div>
+        </td>
+        <td><span class="table-slug" style="max-width:none;">{{ cat.slug }}</span></td>
+        <td style="font-size:0.82rem;color:rgba(255,255,255,0.4);max-width:300px;">
+          {{ cat.description or '—' }}
+        </td>
+        <td>
+          <div class="table-actions">
+            <a href="/categoria/{{ cat.slug }}" target="_blank"
+               class="btn-icon" title="Ver no site">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+            <button
+              class="btn-icon btn-icon--danger"
+              title="Excluir"
+              hx-delete="/admin/categorias/{{ cat.id }}"
+              hx-target="#cat-row-{{ cat.id }}"
+              hx-swap="outerHTML"
+              hx-confirm="Excluir '{{ cat.name }}'?"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" style="text-align:center;color:rgba(255,255,255,0.25);padding:3rem;">
+          Nenhuma categoria cadastrada.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
 </div>
 {% endblock %}

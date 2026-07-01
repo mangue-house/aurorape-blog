@@ -1,9 +1,12 @@
 <footer class="site-footer" role="contentinfo">
   <div class="container">
     <div class="footer-grid">
+
+      {# Coluna de marca #}
       <div class="footer-brand">
         <div class="footer-brand__logo">Aurora PE</div>
-        <p>Jornalismo independente comprometido com a verdade e com Pernambuco.</p>
+        <p>Jornalismo independente comprometido com a verdade e com Pernambuco.
+           Fundado por jornalistas pernambucanos para servir ao interesse público.</p>
         <div class="footer-social" aria-label="Redes sociais">
           <a href="#" aria-label="Twitter / X">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -12,7 +15,9 @@
           </a>
           <a href="#" aria-label="Instagram">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
             </svg>
           </a>
           <a href="#" aria-label="Facebook">
@@ -42,19 +47,45 @@
         <ul>
           <li><a href="/sobre">Sobre</a></li>
           <li><a href="/expediente">Expediente</a></li>
+          <li><a href="/agenda-sindical">Agenda Sindical</a></li>
           <li><a href="/apoie">Apoie</a></li>
           <li><a href="/contato">Contato</a></li>
+          <li><a href="/privacidade">Privacidade</a></li>
+          <li><a href="/termos">Termos de Uso</a></li>
         </ul>
       </div>
 
+      {# Coluna Newsletter #}
       <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="/privacidade">Política de Privacidade</a></li>
-          <li><a href="/termos">Termos de Uso</a></li>
-          <li><a href="/cookies">Cookies</a></li>
-        </ul>
+        <h4>Newsletter</h4>
+        <p style="font-size:0.8125rem;margin-bottom:0.75rem;line-height:1.5;">
+          Receba as melhores matérias direto no e-mail.
+        </p>
+        <form
+          hx-post="/newsletter"
+          hx-target="#newsletter-footer-feedback"
+          hx-swap="innerHTML"
+          hx-on::after-request="this.reset()"
+          style="display:flex;flex-direction:column;gap:0.5rem;"
+        >
+          <input type="email" name="email" placeholder="seu@email.com" required
+                 aria-label="Seu e-mail"
+                 style="padding:0.5rem 0.75rem;border:1px solid rgba(255,255,255,0.2);
+                        border-radius:4px;background:rgba(255,255,255,0.08);color:#fff;
+                        font-size:0.875rem;font-family:var(--font-body);" />
+          <button type="submit"
+                  style="background:var(--color-secondary);color:#fff;border:none;
+                         border-radius:4px;padding:0.5rem;font-weight:600;cursor:pointer;
+                         transition:opacity 0.15s;"
+                  onmouseover="this.style.opacity='0.88'"
+                  onmouseout="this.style.opacity='1'">
+            Assinar
+          </button>
+        </form>
+        <div id="newsletter-footer-feedback" aria-live="polite"
+             style="font-size:0.8rem;margin-top:0.5rem;color:rgba(255,255,255,0.75);"></div>
       </div>
+
     </div>
 
     <div class="footer-bottom">

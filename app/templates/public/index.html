@@ -4,122 +4,207 @@
 {% block meta_description %}O melhor do jornalismo pernambucano.{% endblock %}
 
 {% block content %}
-<div class="container py-6">
 
-  {# Destaque principal #}
-  {% include "components/hero.html" %}
+{# ─── HERO FULL-WIDTH ─── #}
+{% include "components/hero.html" %}
 
-  {# Subdestaques #}
-  {% if secondary %}
-  <section class="mt-6" aria-label="Subdestaques">
-    <h2 class="section-title">Destaques</h2>
-    <div class="secondary-grid">
-      {% for article in secondary %}
+<div class="container">
+
+  {# ─── FEATURED GRID ─── #}
+  {% if secondary and secondary | length > 2 %}
+  <section aria-label="Em destaque" class="featured-grid">
+    {% for article in secondary[2:] %}
+      {% set card_variant = 'featured' %}
+      {% include "components/article_card.html" %}
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {# ─── AD INLINE ─── #}
+  <div class="ad-inline" aria-label="Publicidade">
+    <div class="ad-placeholder ad-placeholder--banner" role="img" aria-label="Espaço publicitário 728×90">
+      <span class="ad-placeholder__label">Publicidade</span>
+      <span class="ad-placeholder__size">728 × 90</span>
+    </div>
+    <div class="ad-placeholder ad-placeholder--strip" role="img" aria-label="Espaço publicitário mobile">
+      <span class="ad-placeholder__label">Publicidade</span>
+    </div>
+  </div>
+
+  {# ─── ÚLTIMAS NOTÍCIAS — layout 2 colunas com ênfase à esquerda ─── #}
+  {% if feed %}
+  <section aria-label="Últimas notícias" style="margin-bottom:3.5rem;">
+    <div class="section-heading section-heading--red">
+      <div class="section-heading__bar" aria-hidden="true"></div>
+      <span class="section-heading__text">Últimas notícias</span>
+    </div>
+
+    <div class="ultimas-grid">
+      {# Coluna esquerda — destaque principal #}
+      <div class="ultimas-grid__main">
+        {% set article = feed[0] %}
+        {% set card_variant = 'editorial' %}
         {% include "components/article_card.html" %}
-      {% endfor %}
+      </div>
+
+      {# Coluna direita — lista vertical #}
+      <div class="ultimas-grid__list">
+        {% for article in feed[1:5] %}
+        <a href="/artigo/{{ article.slug }}" class="ultimas-item">
+          <div class="ultimas-item__body">
+            {% if article.chapeu %}
+            <span class="ultimas-item__chapeu">{{ article.chapeu }}</span>
+            {% endif %}
+            <h3 class="ultimas-item__title">{{ article.title }}</h3>
+            <div class="ultimas-item__meta">
+              {{ article.author.name }} ·
+              {{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}
+            </div>
+          </div>
+          {% if article.featured_image_url %}
+          <img src="{{ article.featured_image_url }}" alt="{{ article.title }}"
+               class="ultimas-item__img" loading="lazy" />
+          {% endif %}
+        </a>
+        {% endfor %}
+      </div>
     </div>
   </section>
   {% endif %}
 
-  {# Feed principal + sidebar #}
-  <div class="mt-6" style="display:grid;gap:3rem;grid-template-columns:1fr;">
-    <style>@media(min-width:1024px){.home-grid{grid-template-columns:1fr 300px!important}}</style>
-    <div class="home-grid" style="display:grid;gap:3rem;grid-template-columns:1fr;">
+  {# ─── SEÇÕES POR CATEGORIA ─── #}
+  {% set ns = namespace(cat_seen=[], section_count=0) %}
+  {% for article in feed %}
+    {% if article.category and article.category.slug not in ns.cat_seen and ns.section_count < 3 %}
+      {% set _ = ns.cat_seen.append(article.category.slug) %}
 
-      {# Feed cronológico #}
-      <section aria-label="Últimas notícias">
-        <h2 class="section-title">Últimas notícias</h2>
-        <div class="feed" id="feed">
-          {% for article in feed %}
-          <article class="feed-item">
-            <div class="feed-item__body">
-              {% if article.chapeu %}
-              <span class="chapeu">{{ article.chapeu }}</span>
-              {% endif %}
-              <h3 class="feed-item__title">
-                <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
-              </h3>
-              {% if article.subtitle %}
-              <p class="feed-item__excerpt">{{ article.subtitle }}</p>
-              {% endif %}
-              <div class="feed-item__meta">
-                <span>{{ article.author.name }}</span>
-                <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
-                {% if article.reading_time_min %}
-                <span>{{ article.reading_time_min }} min</span>
-                {% endif %}
-              </div>
-            </div>
-            {% if article.featured_image_url %}
-            <div class="feed-item__image">
-              <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
-                <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
-              </a>
-            </div>
-            {% endif %}
-          </article>
-          {% endfor %}
+      <section class="cat-section" aria-label="{{ article.category.name }}" style="margin-bottom:3rem;">
+        <div class="section-heading">
+          <div class="section-heading__bar" aria-hidden="true"></div>
+          <span class="section-heading__text">{{ article.category.name }}</span>
+          <a href="/categoria/{{ article.category.slug }}" class="section-heading__link"
+             aria-label="Ver tudo de {{ article.category.name }}">Ver tudo →</a>
         </div>
 
-        {# Load more via HTMX #}
-        {% if feed | length >= 10 %}
-        <div class="text-center mt-4">
-          <button
-            class="btn-subscribe"
-            hx-get="/?page=2"
-            hx-target="#feed"
-            hx-swap="beforeend"
-            hx-indicator="#load-spinner"
-            style="background:var(--color-primary);"
-          >
-            Carregar mais
-          </button>
-          <span id="load-spinner" class="htmx-indicator" style="margin-left:0.75rem;color:var(--color-muted);">
-            Carregando...
-          </span>
+        <div class="cat-section__grid">
+          <div class="cat-section__big-card">
+            {% set card_variant = 'editorial' %}
+            {% include "components/article_card.html" %}
+          </div>
+          <div class="cat-section__list">
+            {% set inner_ns = namespace(count=0) %}
+            {% for inner_art in feed %}
+              {% if inner_art.category and inner_art.category.slug == article.category.slug
+                   and inner_art.id != article.id and inner_ns.count < 3 %}
+                {% set article = inner_art %}
+                {% set card_variant = 'compact' %}
+                {% include "components/article_card.html" %}
+                {% set inner_ns.count = inner_ns.count + 1 %}
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
-        {% endif %}
       </section>
 
-      {# Sidebar #}
-      <aside aria-label="Conteúdo complementar">
-        {% include "components/podcast_player.html" %}
+      {% set ns.section_count = ns.section_count + 1 %}
+    {% endif %}
+  {% endfor %}
 
-        <div class="mt-4">
-          <h2 class="section-title">Editorias</h2>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;">
-            {% for cat in categories %}
-            <li>
-              <a href="/categoria/{{ cat.slug }}"
-                 style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--color-border);font-weight:500;color:var(--color-text);">
-                {{ cat.name }}
-                <span style="color:var(--color-secondary);">→</span>
-              </a>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </aside>
+  {# ─── BRAND SECTION ─── #}
+  <section class="brand-section" aria-label="Sobre o Aurora PE">
+    <span class="brand-section__label">Aurora PE</span>
+    <h2 class="brand-section__title">Jornalismo que serve a Pernambuco</h2>
+    <p class="brand-section__desc">
+      Fundado por jornalistas pernambucanos, o Aurora PE é comprometido com a verdade,
+      a independência editorial e o interesse público.
+    </p>
+    <a href="/sobre" class="brand-section__cta">Conheça nossa história</a>
+  </section>
+
+  {# ─── AD INLINE ─── #}
+  <div class="ad-inline" aria-label="Publicidade">
+    <div class="ad-placeholder ad-placeholder--banner" role="img" aria-label="Espaço publicitário 728×90">
+      <span class="ad-placeholder__label">Publicidade</span>
+      <span class="ad-placeholder__size">728 × 90</span>
+    </div>
+    <div class="ad-placeholder ad-placeholder--strip" role="img" aria-label="Espaço publicitário mobile">
+      <span class="ad-placeholder__label">Publicidade</span>
     </div>
   </div>
 
-  {# Newsletter #}
-  <section class="mt-6" aria-label="Newsletter">
-    <div class="newsletter-block">
-      <h2>Receba o Aurora PE na sua caixa de entrada</h2>
-      <p>A newsletter diária com o melhor do jornalismo pernambucano.</p>
-      <form
-        class="newsletter-form"
-        hx-post="/newsletter"
-        hx-target="#newsletter-feedback"
-        hx-swap="innerHTML"
-        hx-on::after-request="this.reset()"
-      >
-        <input type="email" name="email" placeholder="seu@email.com" required aria-label="Seu e-mail" />
-        <button type="submit">Assinar</button>
-      </form>
-      <div id="newsletter-feedback" aria-live="polite"></div>
+  {# ─── NEWSLETTER ─── #}
+  <section aria-label="Newsletter" class="newsletter-block" style="margin-bottom:4rem;">
+    <h2>Não perca nada do Aurora PE</h2>
+    <p>Assine nossa newsletter e receba as melhores reportagens direto no e-mail.</p>
+    <form
+      class="newsletter-form"
+      hx-post="/newsletter"
+      hx-target="#newsletter-feedback-home"
+      hx-swap="innerHTML"
+      hx-on::after-request="this.reset()"
+    >
+      <input type="email" name="email" placeholder="seu@email.com" required aria-label="Seu e-mail" />
+      <button type="submit">Assinar</button>
+    </form>
+    <div id="newsletter-feedback-home" aria-live="polite"></div>
+  </section>
+
+  {# ─── MAIS NOTÍCIAS — feed completo ─── #}
+  <section aria-label="Mais notícias" style="margin-bottom:4rem;">
+    <div class="section-heading">
+      <div class="section-heading__bar" aria-hidden="true"></div>
+      <span class="section-heading__text">Mais notícias</span>
     </div>
+
+    <div class="feed" id="feed">
+      {% for article in feed %}
+      <article class="feed-item">
+        <div class="feed-item__body">
+          {% if article.chapeu %}
+          <span class="chapeu">{{ article.chapeu }}</span>
+          {% endif %}
+          <h3 class="feed-item__title">
+            <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+          </h3>
+          {% if article.subtitle %}
+          <p class="feed-item__excerpt">{{ article.subtitle }}</p>
+          {% endif %}
+          <div class="feed-item__meta">
+            <span>{{ article.author.name }}</span>
+            <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
+            {% if article.reading_time_min %}
+            <span>{{ article.reading_time_min }} min</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if article.featured_image_url %}
+        <div class="feed-item__image">
+          <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+            <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+          </a>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+
+    {% if feed | length >= 10 %}
+    <div class="text-center mt-4">
+      <button
+        class="btn-subscribe"
+        hx-get="/?page=2"
+        hx-target="#feed"
+        hx-swap="beforeend"
+        hx-indicator="#load-spinner"
+        style="background:var(--color-primary);"
+      >
+        Carregar mais
+      </button>
+      <span id="load-spinner" class="htmx-indicator" style="margin-left:0.75rem;color:var(--color-muted);">
+        Carregando...
+      </span>
+    </div>
+    {% endif %}
   </section>
 
 </div>
