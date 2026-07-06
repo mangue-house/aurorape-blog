@@ -1,0 +1,6 @@
+# Este arquivo existe só para configuração de ferramentas (pytest), não para empacotamento.
+# Não adicionar [build-system]/[project] aqui — isso fez o `uv sync` da Vercel tentar
+# empacotar este diretório como um wheel instalável e falhar (ver histórico do repo).
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
