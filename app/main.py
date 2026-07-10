@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -13,6 +14,7 @@ from app.routers.public import router as public_router
 from app.routers.admin import router as admin_router
 from app.mock_seed import seed_mock_data
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -45,12 +47,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 app.include_router(public_router)
 app.include_router(admin_router)
 
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "app", "templates"))
 
 
 @app.exception_handler(404)

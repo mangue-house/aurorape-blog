@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
+from sqlalchemy import select
 from app.database import engine, Base, AsyncSessionLocal
 from app.models.category import Category
 from app.models.author import Author
@@ -12,6 +13,11 @@ async def seed_mock_data():
         await conn.run_sync(Base.metadata.create_all)
 
     async with AsyncSessionLocal() as db:
+        # Check if already seeded
+        result = await db.execute(select(Category).limit(1))
+        if result.scalars().first():
+            return  # Already seeded
+
         # Categories
         categories = [
             Category(name="Política", slug="politica", description="Cobertura política do estado"),

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from datetime import datetime, timedelta
 
 from jose import JWTError, jwt
@@ -25,14 +27,14 @@ def create_access_token(data: dict) -> str:
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_token(token: str) -> dict | None:
+def decode_token(token: str) -> Optional[dict]:
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
         return None
 
 
-async def authenticate_user(db: AsyncSession, email: str, password: str) -> AdminUser | None:
+async def authenticate_user(db: AsyncSession, email: str, password: str) -> Optional[AdminUser]:
     result = await db.execute(select(AdminUser).where(AdminUser.email == email))
     user = result.scalars().first()
     if not user or not verify_password(password, user.hashed_password):

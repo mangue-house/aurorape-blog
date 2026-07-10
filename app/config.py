@@ -3,7 +3,7 @@ from decouple import config
 MOCK_MODE: bool = config("MOCK_MODE", cast=bool, default=True)
 
 if MOCK_MODE:
-    DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
+    DATABASE_URL: str = "sqlite+aiosqlite:////tmp/aurorape.db"
 else:
     DATABASE_URL: str = config("DATABASE_URL", default="sqlite+aiosqlite:///./aurorape.db")
 

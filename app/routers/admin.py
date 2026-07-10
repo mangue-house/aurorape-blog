@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
@@ -17,8 +18,10 @@ from app.services.article import get_all_categories
 from app.services.auth import authenticate_user, create_access_token, hash_password
 from app.services.article import get_feed
 
+# __file__ is app/routers/admin.py
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 router = APIRouter(prefix="/admin")
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "app", "templates"))
 
 
 def _strftime(value, fmt="%d/%m/%Y"):

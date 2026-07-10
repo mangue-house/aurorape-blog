@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime
 
 from sqlalchemy import (
@@ -41,13 +42,13 @@ class Article(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(300), nullable=False)
     slug: Mapped[str] = mapped_column(String(320), unique=True, nullable=False, index=True)
-    subtitle: Mapped[str | None] = mapped_column(String(500))
-    chapeu: Mapped[str | None] = mapped_column(String(100))
+    subtitle: Mapped[Optional[str]] = mapped_column(String(500))
+    chapeu: Mapped[Optional[str]] = mapped_column(String(100))
     body: Mapped[str] = mapped_column(Text, nullable=False)
-    featured_image_url: Mapped[str | None] = mapped_column(String(500))
+    featured_image_url: Mapped[Optional[str]] = mapped_column(String(500))
     reading_time_min: Mapped[int] = mapped_column(Integer, default=1)
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
-    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    published_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

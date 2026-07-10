@@ -1,3 +1,4 @@
+from typing import Optional
 from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -6,7 +7,7 @@ from app.models.article import Article
 from app.models.category import Category
 
 
-async def get_hero(db: AsyncSession) -> Article | None:
+async def get_hero(db: AsyncSession) -> Optional[Article]:
     result = await db.execute(
         select(Article)
         .where(Article.is_published == True)
@@ -17,7 +18,7 @@ async def get_hero(db: AsyncSession) -> Article | None:
     return result.scalars().first()
 
 
-async def get_secondary(db: AsyncSession, exclude_id: int | None = None, limit: int = 4) -> list[Article]:
+async def get_secondary(db: AsyncSession, exclude_id: Optional[int] = None, limit: int = 4) -> list[Article]:
     q = (
         select(Article)
         .where(Article.is_published == True)
@@ -33,8 +34,8 @@ async def get_secondary(db: AsyncSession, exclude_id: int | None = None, limit: 
 
 async def get_feed(
     db: AsyncSession,
-    exclude_ids: list[int] | None = None,
-    category_slug: str | None = None,
+    exclude_ids: Optional[list[int]] = None,
+    category_slug: Optional[str] = None,
     limit: int = 10,
     offset: int = 0,
 ) -> list[Article]:
@@ -57,7 +58,7 @@ async def get_feed(
     return list(result.scalars().all())
 
 
-async def get_article_by_slug(db: AsyncSession, slug: str) -> Article | None:
+async def get_article_by_slug(db: AsyncSession, slug: str) -> Optional[Article]:
     result = await db.execute(
         select(Article)
         .where(Article.slug == slug, Article.is_published == True)
