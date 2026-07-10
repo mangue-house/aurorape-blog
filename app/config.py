@@ -1,6 +1,6 @@
 from decouple import config
 
-MOCK_MODE: bool = config("MOCK_MODE", cast=bool, default=False)
+MOCK_MODE: bool = config("MOCK_MODE", cast=bool, default=True)
 
 if MOCK_MODE:
     DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
