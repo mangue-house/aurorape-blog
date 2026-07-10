@@ -2,7 +2,7 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
@@ -55,6 +55,25 @@ app.include_router(admin_router)
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "app", "templates"))
 
 
+@app.get("/debug-dir")
+async def debug_dir():
+    app_dir = os.path.join(BASE_DIR, "app")
+    templates_dir = os.path.join(BASE_DIR, "app", "templates")
+    static_dir = os.path.join(BASE_DIR, "static")
+    
+    def safe_listdir(p):
+        try:
+            return os.listdir(p)
+        except Exception as e:
+            return str(e)
+            
+    return {
+        "BASE_DIR": BASE_DIR,
+        "app_contents": safe_listdir(app_dir),
+        "templates_contents": safe_listdir(templates_dir),
+        "static_contents": safe_listdir(static_dir)
+    }
+
 @app.exception_handler(404)
 async def not_found(request: Request, exc):
     return templates.TemplateResponse(
@@ -67,3 +86,4 @@ async def not_found(request: Request, exc):
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
