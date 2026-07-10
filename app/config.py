@@ -1,9 +1,15 @@
 from decouple import config
+import os
+import tempfile
+from pathlib import Path
 
 MOCK_MODE: bool = config("MOCK_MODE", cast=bool, default=True)
 
 if MOCK_MODE:
-    DATABASE_URL: str = "sqlite+aiosqlite:////tmp/aurorape.db"
+    temp_db_path = Path(tempfile.gettempdir()) / "aurorape.db"
+    # SQLAlchemy requires 3 slashes followed by the absolute path. On Windows it looks like ///C:/... and on Linux ////tmp/...
+    # But using sqlite+aiosqlite:/// followed by the stringified path works generally fine if slashes are normalized.
+    DATABASE_URL: str = f"sqlite+aiosqlite:///{temp_db_path.as_posix()}"
 else:
     DATABASE_URL: str = config("DATABASE_URL", default="sqlite+aiosqlite:///./aurorape.db")
 
