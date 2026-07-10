@@ -78,7 +78,7 @@ async def debug_dir():
 async def not_found(request: Request, exc):
     return templates.TemplateResponse(
         request=request,
-        name="public/404.html",
+        name="site/404.html",
         status_code=404,
     )
 

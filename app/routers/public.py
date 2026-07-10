@@ -44,7 +44,7 @@ async def homepage(request: Request, db: AsyncSession = Depends(get_db)):
 
     ctx = await _base_ctx(request, db)
     ctx.update({"hero": hero, "secondary": secondary, "feed": feed})
-    return templates.TemplateResponse(request, "public/index.html", ctx)
+    return templates.TemplateResponse(request, "site/index.html", ctx)
 
 
 @router.get("/artigo/{slug}", response_class=HTMLResponse)
@@ -56,7 +56,7 @@ async def article_page(slug: str, request: Request, db: AsyncSession = Depends(g
     related = await article_svc.get_related(db, art)
     ctx = await _base_ctx(request, db)
     ctx.update({"article": art, "related": related})
-    return templates.TemplateResponse(request, "public/article.html", ctx)
+    return templates.TemplateResponse(request, "site/article.html", ctx)
 
 
 @router.get("/categoria/{slug}", response_class=HTMLResponse)
@@ -73,7 +73,7 @@ async def category_page(
         raise HTTPException(status_code=404, detail="Categoria não encontrada")
 
     ctx.update({"category": cat, "articles": articles, "page": page})
-    return templates.TemplateResponse(request, "public/category.html", ctx)
+    return templates.TemplateResponse(request, "site/category.html", ctx)
 
 
 @router.get("/busca", response_class=HTMLResponse)
@@ -84,7 +84,7 @@ async def search(q: str = "", request: Request = None, db: AsyncSession = Depend
 
     ctx = {"request": request, "results": results, "query": q}
     # HTMX: retorna só o partial
-    return templates.TemplateResponse(request, "public/search.html", ctx)
+    return templates.TemplateResponse(request, "site/search.html", ctx)
 
 
 @router.post("/newsletter", response_class=HTMLResponse)

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} — Aurora PE{% endblock %}
+{% block meta_description %}Todas as matérias de {{ category.name }} no Aurora PE.{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <header class="category-hero">
+    <span class="category-hero__label">Editoria</span>
+    <h1 class="category-hero__name">{{ category.name }}</h1>
+    {% if category.description %}
+    <p class="category-hero__desc">{{ category.description }}</p>
+    {% endif %}
+  </header>
+
+  {% if articles %}
+
+    {# Primeiros 3 artigos em layout mosaic #}
+    {% if articles | length >= 1 %}
+    <section aria-label="Destaques de {{ category.name }}" class="category-mosaic">
+      {% for article in articles[:3] %}
+        {% set card_variant = 'editorial' %}
+        {% include "components/article_card.html" %}
+      {% endfor %}
+    </section>
+    {% endif %}
+
+    {# Artigos restantes em feed padrão #}
+    {% if articles | length > 3 %}
+    <div class="section-heading mt-4">
+      <div class="section-heading__bar" aria-hidden="true"></div>
+      <span class="section-heading__text">Mais em {{ category.name }}</span>
+    </div>
+    <div class="feed" id="category-feed">
+      {% for article in articles[3:] %}
+      <article class="feed-item">
+        <div class="feed-item__body">
+          {% if article.chapeu %}
+          <span class="chapeu">{{ article.chapeu }}</span>
+          {% endif %}
+          <h2 class="feed-item__title">
+            <a href="/artigo/{{ article.slug }}">{{ article.title }}</a>
+          </h2>
+          {% if article.subtitle %}
+          <p class="feed-item__excerpt">{{ article.subtitle }}</p>
+          {% endif %}
+          <div class="feed-item__meta">
+            <span>{{ article.author.name }}</span>
+            <span>{{ article.published_at | strftime('%d/%m/%Y') if article.published_at else '' }}</span>
+            {% if article.reading_time_min %}
+            <span>{{ article.reading_time_min }} min</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if article.featured_image_url %}
+        <div class="feed-item__image">
+          <a href="/artigo/{{ article.slug }}" tabindex="-1" aria-hidden="true">
+            <img src="{{ article.featured_image_url }}" alt="{{ article.title }}" loading="lazy" />
+          </a>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {# Paginação #}
+    <div style="display:flex;justify-content:center;gap:1rem;margin-top:2.5rem;">
+      {% if page > 1 %}
+      <a href="/categoria/{{ category.slug }}?page={{ page - 1 }}"
+         class="btn-subscribe" style="background:var(--color-primary);">
+        ← Anterior
+      </a>
+      {% endif %}
+      {% if articles | length >= 12 %}
+      <a href="/categoria/{{ category.slug }}?page={{ page + 1 }}"
+         class="btn-subscribe" style="background:var(--color-primary);">
+        Próxima →
+      </a>
+      {% endif %}
+    </div>
+
+  {% else %}
+  <p style="color:var(--color-muted);text-align:center;padding:3rem 0;">
+    Nenhuma matéria encontrada nesta editoria.
+  </p>
+  {% endif %}
+
+</div>
+{% endblock %}
