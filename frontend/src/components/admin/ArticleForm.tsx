@@ -34,15 +34,20 @@ export default function ArticleForm({
   const [imgUrl, setImgUrl] = useState(article?.featured_image_url ?? "");
   const [imgError, setImgError] = useState(false);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function syncBody() {
     if (bodyHiddenRef.current && editorRef.current) {
       bodyHiddenRef.current.value = editorRef.current.innerHTML;
     }
   }
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    syncBody();
+  }
+
   function handleToolbarClick(cmd: string, val?: string) {
     document.execCommand(cmd, false, val);
     editorRef.current?.focus();
+    syncBody();
   }
 
   function handleLink() {
@@ -58,6 +63,7 @@ export default function ArticleForm({
       if (newAnchor) newAnchor.target = "_blank";
     }
     editorRef.current?.focus();
+    syncBody();
   }
 
   return (
@@ -162,6 +168,7 @@ export default function ArticleForm({
               data-placeholder="Comece a escrever aqui…"
               suppressContentEditableWarning
               dangerouslySetInnerHTML={{ __html: article?.body ?? "" }}
+              onInput={syncBody}
               onKeyDown={(e) => {
                 if (e.key === "Tab") {
                   e.preventDefault();
