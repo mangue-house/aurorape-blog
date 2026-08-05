@@ -14,7 +14,7 @@ export default async function NewArticlePage() {
       <div className="admin-topbar">
         <div>
           <p className="admin-topbar__breadcrumb">
-            <a href="/admin/artigos" style={{ color: "var(--color-muted)" }}>
+            <a href="/admin" style={{ color: "var(--color-muted)" }}>
               Matérias
             </a>{" "}
             / Nova

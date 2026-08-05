@@ -21,6 +21,8 @@ export interface AuthorMini {
 export interface AuthorOut extends AuthorMini {
   bio?: string | null;
   social_links?: Record<string, string> | null;
+  role?: string | null;
+  email?: string | null;
 }
 
 export interface AuthorCreate {
@@ -29,6 +31,20 @@ export interface AuthorCreate {
   bio?: string | null;
   photo_url?: string | null;
   social_links?: Record<string, string> | null;
+  role: string;
+  email: string;
+  password: string;
+}
+
+export interface AuthorUpdate {
+  name: string;
+  slug?: string | null;
+  bio?: string | null;
+  photo_url?: string | null;
+  social_links?: Record<string, string> | null;
+  role: string;
+  email: string;
+  password?: string | null;
 }
 
 export interface TagOut {

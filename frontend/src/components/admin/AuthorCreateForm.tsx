@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { toSlug } from "@/lib/format";
-import { createAuthorAction } from "@/app/admin/(dashboard)/autores/actions";
+import { createAuthorAction } from "@/app/admin/(dashboard)/users/actions";
 
 export default function AuthorCreateForm() {
   const [slug, setSlug] = useState("");
@@ -53,6 +53,24 @@ export default function AuthorCreateForm() {
               setSlug(e.target.value);
             }}
           />
+        </div>
+        <div className="form-group" style={{ flex: 1, minWidth: 140 }}>
+          <label className="form-label" htmlFor="role">
+            Role <span style={{ color: "var(--color-secondary)" }}>*</span>
+          </label>
+          <input className="form-control" type="text" id="role" name="role" placeholder="Ex: Editor-chefe" required />
+        </div>
+        <div className="form-group" style={{ flex: 1.5, minWidth: 180 }}>
+          <label className="form-label" htmlFor="email">
+            Email <span style={{ color: "var(--color-secondary)" }}>*</span>
+          </label>
+          <input className="form-control" type="email" id="email" name="email" placeholder="email@aurorape.com.br" required autoComplete="off" />
+        </div>
+        <div className="form-group" style={{ flex: 1.5, minWidth: 180 }}>
+          <label className="form-label" htmlFor="password">
+            Senha <span style={{ color: "var(--color-secondary)" }}>*</span>
+          </label>
+          <input className="form-control" type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required minLength={8} autoComplete="new-password" />
         </div>
         <div className="form-group" style={{ flex: 2, minWidth: 180 }}>
           <label className="form-label" htmlFor="bio">

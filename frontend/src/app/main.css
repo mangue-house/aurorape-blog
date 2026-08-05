@@ -1491,6 +1491,17 @@ textarea.form-control { min-height: 100px; resize: vertical; }
 
 .masthead-tier3__actions .btn-search:hover { color: var(--color-text); }
 
+.btn-login {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.15s;
+}
+
+.btn-login:hover { color: var(--color-text); }
+
 .btn-subscribe--sm {
   font-size: 0.75rem;
   padding: 0.25rem 0.75rem;

@@ -6,6 +6,7 @@ import type {
   ArticleUpdate,
   AuthorCreate,
   AuthorOut,
+  AuthorUpdate,
   CategoryCreate,
   CategoryOut,
   DashboardResponse,
@@ -45,8 +46,20 @@ export function listAuthors(token: string) {
   return apiGetAuthed<AuthorOut[]>("/admin/authors", token);
 }
 
+export function getAuthorById(token: string, id: number) {
+  return apiGetAuthed<AuthorOut>(`/admin/authors/${id}`, token);
+}
+
 export function createAuthor(token: string, payload: AuthorCreate) {
   return apiPost<AuthorOut>("/admin/authors", payload, token);
+}
+
+export function updateAuthor(token: string, id: number, payload: AuthorUpdate) {
+  return apiPut<AuthorOut>(`/admin/authors/${id}`, payload, token);
+}
+
+export function deleteAuthor(token: string, id: number) {
+  return apiDelete<void>(`/admin/authors/${id}`, token);
 }
 
 export function listCategoriesAdmin(token: string) {

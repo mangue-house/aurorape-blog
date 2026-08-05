@@ -9,7 +9,7 @@ import type { ArticleCreate } from "@/lib/types";
 export async function deleteArticleAction(id: number) {
   const token = (await getAdminToken())!;
   await deleteArticle(token, id);
-  revalidatePath("/admin/artigos");
+  revalidatePath("/admin");
 }
 
 function parseArticleForm(formData: FormData): ArticleCreate {
@@ -32,14 +32,14 @@ export async function createArticleAction(formData: FormData) {
   const token = (await getAdminToken())!;
   const payload = parseArticleForm(formData);
   await createArticle(token, payload);
-  revalidatePath("/admin/artigos");
-  redirect("/admin/artigos");
+  revalidatePath("/admin");
+  redirect("/admin");
 }
 
 export async function updateArticleAction(id: number, formData: FormData) {
   const token = (await getAdminToken())!;
   const payload = parseArticleForm(formData);
   await updateArticle(token, id, payload);
-  revalidatePath("/admin/artigos");
-  redirect("/admin/artigos");
+  revalidatePath("/admin");
+  redirect("/admin");
 }

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class AuthorMini(BaseModel):
@@ -13,6 +13,8 @@ class AuthorMini(BaseModel):
 class AuthorOut(AuthorMini):
     bio: str | None = None
     social_links: dict | None = None
+    role: str | None = None
+    email: str | None = None
 
 
 class AuthorCreate(BaseModel):
@@ -21,3 +23,17 @@ class AuthorCreate(BaseModel):
     bio: str | None = None
     photo_url: str | None = None
     social_links: dict | None = None
+    role: str
+    email: EmailStr
+    password: str = Field(min_length=8)
+
+
+class AuthorUpdate(BaseModel):
+    name: str
+    slug: str | None = None
+    bio: str | None = None
+    photo_url: str | None = None
+    social_links: dict | None = None
+    role: str
+    email: EmailStr
+    password: str | None = Field(default=None, min_length=8)

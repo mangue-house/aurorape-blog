@@ -56,6 +56,13 @@ export default async function AdminLoginPage({
           </a>
         </p>
       </div>
+
+      <p style={{ textAlign: "center", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", marginTop: "1.5rem" }}>
+        Desenvolvido por{" "}
+        <a href="https://manguehouse.com/" target="_blank" rel="noopener noreferrer" style={{ color: "rgba(255,255,255,0.8)" }}>
+          Mangue House
+        </a>
+      </p>
     </div>
   );
 }

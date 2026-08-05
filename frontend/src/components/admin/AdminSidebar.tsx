@@ -7,7 +7,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   const isArtigos =
-    pathname === "/admin/artigos" || (pathname.startsWith("/admin/artigos/") && pathname !== "/admin/artigos/novo");
+    pathname === "/admin" || (pathname.startsWith("/admin/artigos/") && pathname !== "/admin/artigos/novo");
 
   return (
     <aside className="admin-sidebar">
@@ -22,17 +22,7 @@ export default function AdminSidebar() {
       <nav className="admin-nav" aria-label="Menu administrativo">
         <span className="admin-nav__label">Conteúdo</span>
 
-        <Link href="/admin" aria-current={pathname === "/admin" ? "page" : undefined}>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-          </svg>
-          Dashboard
-        </Link>
-
-        <Link href="/admin/artigos" aria-current={isArtigos ? "page" : undefined}>
+        <Link href="/admin" aria-current={isArtigos ? "page" : undefined}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
             <polyline points="14 2 14 8 20 8" />
@@ -55,12 +45,12 @@ export default function AdminSidebar() {
         <hr className="admin-nav__divider" />
         <span className="admin-nav__label">Cadastros</span>
 
-        <Link href="/admin/autores" aria-current={pathname.startsWith("/admin/autores") ? "page" : undefined}>
+        <Link href="/admin/users" aria-current={pathname.startsWith("/admin/users") ? "page" : undefined}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-          Autores
+          Colaboradores
         </Link>
 
         <Link href="/admin/categorias" aria-current={pathname.startsWith("/admin/categorias") ? "page" : undefined}>

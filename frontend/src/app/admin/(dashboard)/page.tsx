@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { getAdminToken } from "@/lib/auth";
-import { getDashboard } from "@/lib/admin-api";
+import { getDashboard, listArticles } from "@/lib/admin-api";
 import { formatDate } from "@/lib/format";
+import DeleteButton from "@/components/admin/DeleteButton";
+import { deleteArticleAction } from "./artigos/actions";
 
-export const metadata = { title: "Dashboard — Aurora PE Admin" };
+export const metadata = { title: "Matérias — Aurora PE Admin" };
 
 export default async function AdminDashboardPage() {
   const token = (await getAdminToken())!;
-  const { total_articles, total_published, total_authors, recent } = await getDashboard(token);
+  const [{ total_articles, total_published, total_authors }, articles] = await Promise.all([
+    getDashboard(token),
+    listArticles(token),
+  ]);
 
   return (
     <>
       <div className="admin-topbar">
         <div>
           <p className="admin-topbar__breadcrumb">Aurora PE Admin</p>
-          <h1>Dashboard</h1>
+          <h1>Matérias</h1>
         </div>
         <Link href="/admin/artigos/novo" className="btn-primary">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
@@ -41,76 +46,12 @@ export default async function AdminDashboardPage() {
           </div>
           <div className="stat-card stat-card--accent">
             <div className="stat-card__value">{total_authors}</div>
-            <div className="stat-card__label">Autores</div>
+            <div className="stat-card__label">Colaboradores</div>
           </div>
         </div>
 
-        <div className="card">
-          <div className="card-header">
-            <span className="card-header__title">Publicações recentes</span>
-            <Link href="/admin/artigos" style={{ fontSize: "0.75rem", color: "var(--color-secondary)" }}>
-              Ver todas →
-            </Link>
-          </div>
-
-          {recent.length > 0 ? (
-            recent.map((article) => (
-              <Link key={article.id} href={`/admin/artigos/${article.id}/editar`} className="recent-row">
-                <div style={{ flexShrink: 0 }}>
-                  {article.is_published ? (
-                    <span className="badge badge-green">Pub</span>
-                  ) : (
-                    <span className="badge badge-gray">Rascunho</span>
-                  )}
-                </div>
-                <div style={{ flex: 1, overflow: "hidden" }}>
-                  <div className="recent-row__title">{article.title}</div>
-                  {article.chapeu && (
-                    <div
-                      style={{
-                        fontSize: "0.68rem",
-                        color: "var(--color-accent)",
-                        fontWeight: 700,
-                        letterSpacing: "0.07em",
-                        textTransform: "uppercase",
-                        marginTop: "0.1rem",
-                      }}
-                    >
-                      {article.chapeu}
-                    </div>
-                  )}
-                </div>
-                <div className="recent-row__author">{article.author.name}</div>
-                <div className="recent-row__date">{formatDate(article.published_at, { day: "2-digit", month: "2-digit", year: "2-digit" })}</div>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.2)", flexShrink: 0 }} aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
-            ))
-          ) : (
-            <div style={{ padding: "3rem", textAlign: "center", color: "rgba(255,255,255,0.28)" }}>
-              Nenhum artigo ainda.
-              <Link href="/admin/artigos/novo" style={{ color: "var(--color-secondary)", marginLeft: "0.4rem" }}>
-                Criar a primeira matéria →
-              </Link>
-            </div>
-          )}
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: "1rem", marginTop: "1.5rem" }}>
-          <Link href="/admin/artigos/novo" className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", textDecoration: "none", color: "inherit" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 8, background: "var(--color-secondary)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" aria-hidden="true">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#fff" }}>Nova matéria</div>
-              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>Criar e publicar</div>
-            </div>
-          </Link>
-          <Link href="/admin/autores" className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", textDecoration: "none", color: "inherit" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+          <Link href="/admin/users" className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", textDecoration: "none", color: "inherit" }}>
             <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(79,142,247,0.18)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" strokeWidth="2" aria-hidden="true">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -118,8 +59,8 @@ export default async function AdminDashboardPage() {
               </svg>
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#fff" }}>Autores</div>
-              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>Gerenciar redatores</div>
+              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--color-text)" }}>Colaboradores</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--color-muted)" }}>Gerenciar colaboradores</div>
             </div>
           </Link>
           <Link href="/admin/categorias" className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", textDecoration: "none", color: "inherit" }}>
@@ -130,23 +71,96 @@ export default async function AdminDashboardPage() {
               </svg>
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#fff" }}>Categorias</div>
-              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>Editorias do portal</div>
+              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--color-text)" }}>Categorias</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--color-muted)" }}>Editorias do portal</div>
             </div>
           </Link>
           <a href="/" target="_blank" className="card" style={{ padding: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", textDecoration: "none", color: "inherit" }}>
-            <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="2" aria-hidden="true">
+            <div style={{ width: 40, height: 40, borderRadius: 8, background: "rgba(26,26,26,0.06)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)" strokeWidth="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="2" y1="12" x2="22" y2="12" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "#fff" }}>Ver site</div>
-              <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.35)" }}>Abrir em nova aba</div>
+              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: "var(--color-text)" }}>Ver site</div>
+              <div style={{ fontSize: "0.75rem", color: "var(--color-muted)" }}>Abrir em nova aba</div>
             </div>
           </a>
+        </div>
+
+        <div className="card">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Categoria</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th style={{ width: 100 }} />
+              </tr>
+            </thead>
+            <tbody>
+              {articles.length > 0 ? (
+                articles.map((article) => (
+                  <tr key={article.id} id={`article-row-${article.id}`}>
+                    <td style={{ maxWidth: 360 }}>
+                      <div style={{ fontWeight: 600, color: "var(--color-text)" }}>{article.title}</div>
+                      <div className="table-slug">/{article.slug}</div>
+                    </td>
+                    <td style={{ color: "var(--color-muted)" }}>{article.author.name}</td>
+                    <td>
+                      <span style={{ fontSize: "0.75rem", color: "var(--color-accent)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        {article.category.name}
+                      </span>
+                    </td>
+                    <td>
+                      {article.is_published ? (
+                        <span className="badge badge-green">Publicado</span>
+                      ) : (
+                        <span className="badge badge-gray">Rascunho</span>
+                      )}
+                    </td>
+                    <td style={{ fontSize: "0.78rem", color: "var(--color-muted)", whiteSpace: "nowrap" }}>
+                      {formatDate(article.published_at) || "—"}
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <a href={`/artigo/${article.slug}`} target="_blank" rel="noopener" className="btn-icon" title="Ver no site">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            <polyline points="15 3 21 3 21 9" />
+                            <line x1="10" y1="14" x2="21" y2="3" />
+                          </svg>
+                        </a>
+                        <Link href={`/admin/artigos/${article.id}/editar`} className="btn-icon" title="Editar">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                        </Link>
+                        <DeleteButton
+                          confirmMessage={`Excluir '${article.title}'?`}
+                          onDelete={deleteArticleAction.bind(null, article.id)}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: "center", color: "var(--color-muted)", padding: "3.5rem" }}>
+                    Nenhuma matéria cadastrada.
+                    <Link href="/admin/artigos/novo" style={{ color: "var(--color-secondary)", fontWeight: 600, marginLeft: "0.5rem" }}>
+                      Criar a primeira →
+                    </Link>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </>

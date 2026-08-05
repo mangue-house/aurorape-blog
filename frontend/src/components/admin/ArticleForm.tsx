@@ -264,7 +264,7 @@ export default function ArticleForm({
             <button type="submit" className="btn-primary" style={{ width: "100%" }}>
               {article ? "Salvar alterações" : "Publicar matéria"}
             </button>
-            <a href="/admin/artigos" className="btn-secondary" style={{ width: "100%", textAlign: "center" }}>
+            <a href="/admin" className="btn-secondary" style={{ width: "100%", textAlign: "center" }}>
               Cancelar
             </a>
           </div>
