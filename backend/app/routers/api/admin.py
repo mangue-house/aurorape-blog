@@ -72,15 +72,18 @@ async def articles_list(
 
 @router.get("/articles/{article_id}", response_model=ArticleOut)
 async def article_detail(
-    article_id: int,
+    article_id: str,
     db: AsyncSession = Depends(get_db),
     current_user: AdminUser = Depends(get_current_admin),
 ):
-    result = await db.execute(
+    query = (
         select(Article)
-        .where(Article.id == article_id)
         .options(selectinload(Article.author), selectinload(Article.category), selectinload(Article.tags))
     )
+    if article_id.isdigit():
+        result = await db.execute(query.where(Article.id == int(article_id)))
+    else:
+        result = await db.execute(query.where(Article.slug == article_id))
     article = result.scalars().first()
     if not article:
         raise HTTPException(status_code=404, detail="Artigo não encontrado")
@@ -119,18 +122,24 @@ async def article_create(
 
 @router.put("/articles/{article_id}", response_model=ArticleOut)
 async def article_update(
-    article_id: int,
+    article_id: str,
     payload: ArticleUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: AdminUser = Depends(get_current_admin),
 ):
-    result = await db.execute(select(Article).where(Article.id == article_id))
+    if article_id.isdigit():
+        cond = Article.id == int(article_id)
+    else:
+        cond = Article.slug == article_id
+
+    result = await db.execute(select(Article).where(cond))
     article = result.scalars().first()
     if not article:
         raise HTTPException(status_code=404, detail="Artigo não encontrado")
 
+    resolved_id = article.id
     base_slug = slugify(payload.slug or payload.title)
-    article.slug = await unique_slug(db, base_slug, Article, exclude_id=article_id)
+    article.slug = await unique_slug(db, base_slug, Article, exclude_id=resolved_id)
     article.title = payload.title
     article.subtitle = payload.subtitle
     article.chapeu = payload.chapeu
@@ -150,11 +159,16 @@ async def article_update(
 
 @router.delete("/articles/{article_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def article_delete(
-    article_id: int,
+    article_id: str,
     db: AsyncSession = Depends(get_db),
     current_user: AdminUser = Depends(get_current_admin),
 ):
-    result = await db.execute(select(Article).where(Article.id == article_id))
+    if article_id.isdigit():
+        cond = Article.id == int(article_id)
+    else:
+        cond = Article.slug == article_id
+
+    result = await db.execute(select(Article).where(cond))
     article = result.scalars().first()
     if article:
         await db.delete(article)

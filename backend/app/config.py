@@ -1,4 +1,8 @@
+import os
+import sys
 from decouple import config
+
+TESTING: bool = config("TESTING", cast=bool, default=("pytest" in sys.modules or "PYTEST_CURRENT_TEST" in os.environ))
 
 
 def _to_async_url(url: str) -> str:
@@ -25,9 +29,14 @@ else:
 SECRET_KEY: str = config("SECRET_KEY", default="dev-secret-key-change-in-production")
 ALGORITHM: str = config("ALGORITHM", default="HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES: int = config("ACCESS_TOKEN_EXPIRE_MINUTES", cast=int, default=60)
-DEBUG: bool = config("DEBUG", cast=bool, default=True)
+DEBUG: bool = config("DEBUG", cast=bool, default=False)
 SITE_NAME: str = config("SITE_NAME", default="Aurora PE")
 SITE_URL: str = config("SITE_URL", default="http://localhost:8000")
+
+if not DEBUG and not TESTING and (SECRET_KEY == "dev-secret-key-change-in-production" or len(SECRET_KEY) < 32):
+    raise RuntimeError(
+        "CONFIGURAÇÃO DE SEGURANÇA CRÍTICA: SECRET_KEY precisa ser definida no ambiente com pelo menos 32 caracteres seguros quando DEBUG=False."
+    )
 
 # Origens permitidas por CORS, separadas por vírgula (ex: "http://localhost:3000,https://aurorape.vercel.app")
 CORS_ORIGINS: str = config("CORS_ORIGINS", default="http://localhost:3000")

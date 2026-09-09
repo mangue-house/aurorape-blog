@@ -2,11 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getAdminToken } from "@/lib/auth";
+import { requireAdminToken } from "@/lib/auth";
 import { createAuthor, deleteAuthor, updateAuthor } from "@/lib/admin-api";
 
 export async function createAuthorAction(formData: FormData) {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   await createAuthor(token, {
     name: String(formData.get("name") ?? ""),
     slug: String(formData.get("slug") ?? "") || null,
@@ -20,7 +20,7 @@ export async function createAuthorAction(formData: FormData) {
 }
 
 export async function updateAuthorAction(id: number, formData: FormData) {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   const password = String(formData.get("password") ?? "");
   await updateAuthor(token, id, {
     name: String(formData.get("name") ?? ""),
@@ -36,7 +36,7 @@ export async function updateAuthorAction(id: number, formData: FormData) {
 }
 
 export async function deleteAuthorAction(id: number) {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   await deleteAuthor(token, id);
   revalidatePath("/admin/users");
 }

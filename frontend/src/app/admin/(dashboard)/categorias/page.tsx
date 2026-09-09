@@ -1,11 +1,11 @@
-import { getAdminToken } from "@/lib/auth";
+import { requireAdminToken } from "@/lib/auth";
 import { listCategoriesAdmin } from "@/lib/admin-api";
 import CategoryCreateForm from "@/components/admin/CategoryCreateForm";
 
 export const metadata = { title: "Categorias — Aurora PE Admin" };
 
 export default async function AdminCategoriesPage() {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   const categories = await listCategoriesAdmin(token);
 
   return (

@@ -3,8 +3,16 @@ import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { ADMIN_TOKEN_COOKIE } from "@/lib/auth";
 
-export async function GET(request: NextRequest) {
+async function handleLogout(request: NextRequest) {
   const store = await cookies();
   store.delete(ADMIN_TOKEN_COOKIE);
   return NextResponse.redirect(new URL("/admin/login", request.url));
+}
+
+export async function POST(request: NextRequest) {
+  return handleLogout(request);
+}
+
+export async function GET(request: NextRequest) {
+  return handleLogout(request);
 }

@@ -3,6 +3,7 @@ export interface CategoryOut {
   name: string;
   slug: string;
   description?: string | null;
+  article_count?: number;
 }
 
 export interface CategoryCreate {

@@ -4,7 +4,9 @@ import { ADMIN_TOKEN_COOKIE } from "@/lib/auth";
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (pathname === "/admin/login") return NextResponse.next();
+  if (pathname === "/admin/login") {
+    return NextResponse.next();
+  }
 
   const token = request.cookies.get(ADMIN_TOKEN_COOKIE)?.value;
   if (!token) {
