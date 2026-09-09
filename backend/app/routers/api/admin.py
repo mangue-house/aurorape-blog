@@ -12,11 +12,11 @@ from app.models.author import Author
 from app.models.category import Category
 from app.models.user import AdminUser
 from app.schemas.article import ArticleCreate, ArticleListItem, ArticleOut, ArticleUpdate
-from app.schemas.author import AuthorCreate, AuthorOut
+from app.schemas.author import AuthorCreate, AuthorOut, AuthorUpdate
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.schemas.category import CategoryCreate, CategoryOut
 from app.services import article as article_svc
-from app.services.auth import authenticate_user, create_access_token
+from app.services.auth import authenticate_user, create_access_token, hash_password
 from app.services.text import calculate_reading_time, sanitize_html, slugify, unique_slug
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
@@ -169,7 +169,9 @@ async def authors_list(
     db: AsyncSession = Depends(get_db),
     current_user: AdminUser = Depends(get_current_admin),
 ):
-    result = await db.execute(select(Author).order_by(Author.name))
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).order_by(Author.name)
+    )
     return list(result.scalars().all())
 
 
@@ -179,18 +181,112 @@ async def author_create(
     db: AsyncSession = Depends(get_db),
     current_user: AdminUser = Depends(get_current_admin),
 ):
+    existing = await db.execute(select(AdminUser).where(AdminUser.email == payload.email))
+    if existing.scalars().first():
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email já cadastrado")
+
     slug = await unique_slug(db, slugify(payload.slug or payload.name), Author)
+    user = AdminUser(email=payload.email, hashed_password=hash_password(payload.password), is_active=True)
     author = Author(
         name=payload.name,
         slug=slug,
         bio=payload.bio,
         photo_url=payload.photo_url,
         social_links=payload.social_links,
+        role=payload.role,
+        user=user,
     )
-    db.add(author)
+    db.add_all([user, author])
     await db.commit()
-    await db.refresh(author)
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).where(Author.id == author.id)
+    )
+    return result.scalars().one()
+
+
+@router.get("/authors/{author_id}", response_model=AuthorOut)
+async def author_get(
+    author_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin),
+):
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).where(Author.id == author_id)
+    )
+    author = result.scalars().first()
+    if not author:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Colaborador não encontrado")
     return author
+
+
+@router.put("/authors/{author_id}", response_model=AuthorOut)
+async def author_update(
+    author_id: int,
+    payload: AuthorUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin),
+):
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).where(Author.id == author_id)
+    )
+    author = result.scalars().first()
+    if not author:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Colaborador não encontrado")
+
+    if not author.user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Colaborador sem conta de login vinculada")
+
+    if payload.email != author.user.email:
+        existing = await db.execute(
+            select(AdminUser).where(AdminUser.email == payload.email, AdminUser.id != author.user.id)
+        )
+        if existing.scalars().first():
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email já cadastrado")
+        author.user.email = payload.email
+
+    if payload.password:
+        author.user.hashed_password = hash_password(payload.password)
+
+    author.slug = await unique_slug(db, slugify(payload.slug or payload.name), Author, exclude_id=author_id)
+    author.name = payload.name
+    author.bio = payload.bio
+    author.photo_url = payload.photo_url
+    author.social_links = payload.social_links
+    author.role = payload.role
+
+    await db.commit()
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).where(Author.id == author_id)
+    )
+    return result.scalars().one()
+
+
+@router.delete("/authors/{author_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def author_delete(
+    author_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin),
+):
+    result = await db.execute(
+        select(Author).options(selectinload(Author.user)).where(Author.id == author_id)
+    )
+    author = result.scalars().first()
+    if not author:
+        return None
+
+    articles_count = await db.execute(select(func.count()).select_from(Article).where(Article.author_id == author_id))
+    if articles_count.scalar_one() > 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Não é possível excluir um colaborador com matérias cadastradas",
+        )
+
+    user = author.user
+    await db.delete(author)
+    if user:
+        await db.delete(user)
+    await db.commit()
+    return None
 
 
 # ─── Categories ───────────────────────────────────────────────────────────────
