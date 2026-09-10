@@ -41,7 +41,7 @@ export default function SobrePage() {
             lineHeight: 1.6,
           }}
         >
-          Notícias de qualidade com foco no sindicalismo, movimentos sociais e organizações populares em Pernambuco.
+          Jornalismo independente no centro das lutas sindicais e dos movimentos populares de Pernambuco.
         </p>
       </header>
 
@@ -58,13 +58,13 @@ export default function SobrePage() {
       >
         <p
           style={{
-            fontSize: "1.2rem",
+            fontSize: "1.15rem",
             lineHeight: "1.8",
             color: "var(--color-text)",
             margin: 0,
           }}
         >
-          O <strong>AuroraPE</strong> é um site de notícias que foca no sindicalismo, movimentos sociais e ONGs. Aqui você encontrará notícias de qualidade, onde quer que esteja e quando quiser.
+          O <strong>Aurora PE</strong> nasceu para cobrir o que a grande mídia local costuma colocar de lado: as assembleias de base, as greves, a rotina dos sindicatos e os atos populares do litoral ao Sertão. Acreditamos em reportagem apurada no chão da fábrica, na sala de aula e nas ruas, ouvindo quem vive e constrói a realidade do estado.
         </p>
       </section>
 
@@ -97,38 +97,57 @@ export default function SobrePage() {
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
               padding: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "1.25rem",
             }}
-          >
-            <span
+          > 
+            <img
+              src="/images/Denilson_Miatto.jpeg"
+              alt="Denilson Miatto"
+              width={84}
+              height={84}
               style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "var(--color-secondary)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
+                width: "84px",
+                height: "84px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid var(--color-border)",
+                flexShrink: 0,
               }}
-            >
-              Editor-chefe
-            </span>
-            <h3
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                margin: "0.5rem 0",
-                color: "var(--color-primary)",
-              }}
-            >
-              Denilson Miatto
-            </h3>
-            <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--color-muted)" }}>
-              E-mail:{" "}
-              <a
-                href="mailto:redacaoaurorape@gmail.com"
-                style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
+            />
+            <div>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: "var(--color-secondary)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
               >
-                redacaoaurorape@gmail.com
-              </a>
-            </p>
+                Editor-chefe
+              </span>
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  margin: "0.25rem 0 0.5rem",
+                  color: "var(--color-primary)",
+                }}
+              >
+                Denilson Miatto
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--color-muted)" }}>
+                E-mail:{" "}
+                <a
+                  href="mailto:redacaoaurorape@gmail.com"
+                  style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
+                >
+                  redacaoaurorape@gmail.com
+                </a>
+              </p>
+            </div>
           </div>
 
           <div
@@ -137,38 +156,57 @@ export default function SobrePage() {
               border: "1px solid var(--color-border)",
               borderRadius: "8px",
               padding: "1.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "1.25rem",
             }}
-          >
-            <span
+          > 
+            <img
+              src="/images/Joao_Carlos_Mazella.jpeg"
+              alt="João Mazella"
+              width={84}
+              height={84}
               style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "var(--color-secondary)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
+                width: "84px",
+                height: "84px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid var(--color-border)",
+                flexShrink: 0,
               }}
-            >
-              Fotojornalista Coordenador
-            </span>
-            <h3
-              style={{
-                fontSize: "1.25rem",
-                fontWeight: 700,
-                margin: "0.5rem 0",
-                color: "var(--color-primary)",
-              }}
-            >
-              João Mazella
-            </h3>
-            <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--color-muted)" }}>
-              E-mail:{" "}
-              <a
-                href="mailto:redacaoaurorape@gmail.com"
-                style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
+            />
+            <div>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  color: "var(--color-secondary)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
               >
-                redacaoaurorape@gmail.com
-              </a>
-            </p>
+                Fotojornalista Coordenador
+              </span>
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  margin: "0.25rem 0 0.5rem",
+                  color: "var(--color-primary)",
+                }}
+              >
+                João Mazella
+              </h3>
+              <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--color-muted)" }}>
+                E-mail:{" "}
+                <a
+                  href="mailto:redacaoaurorape@gmail.com"
+                  style={{ color: "var(--color-secondary)", textDecoration: "underline" }}
+                >
+                  redacaoaurorape@gmail.com
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -187,10 +225,10 @@ export default function SobrePage() {
       >
         <div>
           <h4 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "var(--color-primary)" }}>
-            Dúvidas, sugestões ou envio de pautas?
+            Tem uma denúncia ou sugestão de pauta?
           </h4>
           <p style={{ fontSize: "0.875rem", color: "var(--color-muted)", margin: "0.25rem 0 0" }}>
-            Entre em contato com nossa redação pelo e-mail oficial.
+            Fale direto com os repórteres. O sigilo da sua identidade é garantido.
           </p>
         </div>
         <div style={{ display: "flex", gap: "0.75rem" }}>

@@ -165,13 +165,13 @@ export default function ContatoPage() {
           Como enviar sua pauta ou evento sindical
         </h3>
         <p style={{ color: "var(--color-muted)", fontSize: "0.95rem", lineHeight: 1.7, marginBottom: "1rem" }}>
-          Para que possamos realizar a cobertura com agilidade e qualidade, inclua no seu e-mail:
+          Para a nossa redação conseguir acompanhar e checar tudo a tempo, envie no e-mail:
         </p>
         <ul style={{ paddingLeft: "1.5rem", color: "var(--color-text)", fontSize: "0.95rem", lineHeight: 1.8 }}>
-          <li><strong>Assunto claro:</strong> Ex: <em>[Pauta] Paralisação dos Servidores Municipais no Recife</em>;</li>
-          <li><strong>Informações essenciais:</strong> Data, horário exato, ponto de concentração ou local do evento;</li>
-          <li><strong>Contatos da assessoria ou liderança:</strong> Telefone/WhatsApp para confirmação de informações pela equipe;</li>
-          <li><strong>Material complementar:</strong> Documentos oficiais, fotos em boa qualidade (com crédito do autor) ou notas à imprensa.</li>
+          <li><strong>Assunto direto:</strong> comece com <em>[Pauta]</em> e o tema (ex: <em>[Pauta] Paralisação dos Servidores Municipais no Recife</em>);</li>
+          <li><strong>O que vai acontecer:</strong> data, horário de início e local exato ou ponto de concentração;</li>
+          <li><strong>Contato da liderança ou assessoria:</strong> número de telefone/WhatsApp para tirarmos dúvidas na hora da apuração;</li>
+          <li><strong>Anexos e registros:</strong> notas à imprensa, fotos em boa resolução (com o nome do fotógrafo para crédito) ou documentos da categoria.</li>
         </ul>
       </section>
 

@@ -12,7 +12,7 @@ export default function ApoiePage() {
         Apoie o Aurora PE
       </span>
       <h1 style={{ fontFamily: "var(--font-headline)", fontSize: "2rem", margin: "0.75rem 0 1rem" }}>
-        Jornalismo independente precisa de leitores como você!
+        Ajude o Aurora PE a lutar nas trincheiras da informação!
       </h1>
 
       <div

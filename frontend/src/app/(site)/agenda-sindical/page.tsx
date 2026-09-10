@@ -42,7 +42,7 @@ export default function AgendaSindicalPage() {
             lineHeight: 1.6,
           }}
         >
-          O espaço centralizado para divulgação de assembleias, mobilizações de categorias, greves, atos públicos e eventos de formação política em Pernambuco.
+          Calendário permanente de assembleias, paralisações, greves e atos públicos de Pernambuco em um só lugar.
         </p>
       </header>
 
@@ -66,10 +66,10 @@ export default function AgendaSindicalPage() {
             marginBottom: "0.75rem",
           }}
         >
-          📢 Como divulgar a atividade da sua entidade
+          Como divulgar a atividade da sua entidade
         </h2>
         <p style={{ color: "var(--color-text)", fontSize: "1rem", lineHeight: 1.7, margin: "0 0 1rem" }}>
-          Sindicatos, associações de classe, coletivos populares e centrais sindicais podem enviar gratuitamente seus editais de convocação, calendários de assembleias e informes de paralisação para a nossa redação.
+          Sindicatos, associações de classe e movimentos populares podem enviar editais de convocação, calendários e informes de mobilização para publicação gratuita.
         </p>
         <div
           style={{
@@ -81,14 +81,14 @@ export default function AgendaSindicalPage() {
           }}
         >
           <p style={{ margin: 0, fontSize: "0.95rem", color: "var(--color-text)" }}>
-            Envie com antecedência mínima de <strong>48 horas</strong> para o e-mail oficial:{" "}
+            Mande com antecedência mínima de <strong>48 horas</strong> para o e-mail:{" "}
             <a
               href="mailto:redacaoaurorape@gmail.com?subject=[Agenda%20Sindical]"
               style={{ color: "var(--color-secondary)", fontWeight: 700, textDecoration: "underline" }}
             >
               redacaoaurorape@gmail.com
             </a>{" "}
-            com o assunto <strong>[Agenda Sindical]</strong>.
+            com a identificação <strong>[Agenda Sindical]</strong> no assunto.
           </p>
         </div>
       </div>
