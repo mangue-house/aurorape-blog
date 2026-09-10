@@ -26,7 +26,7 @@ export function listArticles(token: string) {
   return apiGetAuthed<ArticleListItem[]>("/admin/articles", token);
 }
 
-export function getArticleById(token: string, id: number) {
+export function getArticleById(token: string, id: number | string) {
   return apiGetAuthed<ArticleOut>(`/admin/articles/${id}`, token);
 }
 
@@ -34,11 +34,11 @@ export function createArticle(token: string, payload: ArticleCreate) {
   return apiPost<ArticleOut>("/admin/articles", payload, token);
 }
 
-export function updateArticle(token: string, id: number, payload: ArticleUpdate) {
+export function updateArticle(token: string, id: number | string, payload: ArticleUpdate) {
   return apiPut<ArticleOut>(`/admin/articles/${id}`, payload, token);
 }
 
-export function deleteArticle(token: string, id: number) {
+export function deleteArticle(token: string, id: number | string) {
   return apiDelete<void>(`/admin/articles/${id}`, token);
 }
 

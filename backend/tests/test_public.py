@@ -19,6 +19,8 @@ async def test_api_categories(client, seed_data):
     data = response.json()
     assert len(data) > 0
     assert data[0]["slug"] == "politica"
+    assert "article_count" in data[0]
+    assert data[0]["article_count"] >= 1
 
 
 @pytest.mark.asyncio

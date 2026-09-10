@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/auth";
+import { requireAdminToken } from "@/lib/auth";
 import { listAuthors } from "@/lib/admin-api";
 import AuthorCreateForm from "@/components/admin/AuthorCreateForm";
 import DeleteButton from "@/components/admin/DeleteButton";
@@ -8,7 +8,7 @@ import { deleteAuthorAction } from "./actions";
 export const metadata = { title: "Colaboradores — Aurora PE Admin" };
 
 export default async function AdminUsersPage() {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   const authors = await listAuthors(token);
 
   return (

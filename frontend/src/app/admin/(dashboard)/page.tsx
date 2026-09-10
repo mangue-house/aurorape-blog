@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAdminToken } from "@/lib/auth";
+import { requireAdminToken } from "@/lib/auth";
 import { getDashboard, listArticles } from "@/lib/admin-api";
 import { formatDate } from "@/lib/format";
 import DeleteButton from "@/components/admin/DeleteButton";
@@ -8,7 +8,7 @@ import { deleteArticleAction } from "./artigos/actions";
 export const metadata = { title: "Matérias — Aurora PE Admin" };
 
 export default async function AdminDashboardPage() {
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
   const [{ total_articles, total_published, total_authors }, articles] = await Promise.all([
     getDashboard(token),
     listArticles(token),
@@ -107,7 +107,13 @@ export default async function AdminDashboardPage() {
                 articles.map((article) => (
                   <tr key={article.id} id={`article-row-${article.id}`}>
                     <td style={{ maxWidth: 360 }}>
-                      <div style={{ fontWeight: 600, color: "var(--color-text)" }}>{article.title}</div>
+                      <Link
+                        href={`/admin/artigos/${article.id}/editar`}
+                        style={{ fontWeight: 600, color: "var(--color-text)", textDecoration: "none" }}
+                        className="table-title-link"
+                      >
+                        {article.title}
+                      </Link>
                       <div className="table-slug">/{article.slug}</div>
                     </td>
                     <td style={{ color: "var(--color-muted)" }}>{article.author.name}</td>

@@ -1,4 +1,4 @@
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, func, or_, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -106,8 +106,27 @@ async def search_articles(db: AsyncSession, query: str, limit: int = 8) -> list[
 
 
 async def get_all_categories(db: AsyncSession) -> list[Category]:
-    result = await db.execute(select(Category).order_by(Category.name))
-    return list(result.scalars().all())
+    stmt = (
+        select(
+            Category,
+            func.count(Article.id).label("article_count"),
+        )
+        .outerjoin(
+            Article,
+            and_(
+                Article.category_id == Category.id,
+                Article.is_published == True,
+            ),
+        )
+        .group_by(Category.id)
+        .order_by(Category.name)
+    )
+    result = await db.execute(stmt)
+    categories = []
+    for cat, count in result.all():
+        cat.article_count = count
+        categories.append(cat)
+    return categories
 
 
 async def get_author_by_slug(db: AsyncSession, slug: str) -> Author | None:

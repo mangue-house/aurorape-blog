@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getAdminToken } from "@/lib/auth";
+import { requireAdminToken } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { getAuthorById } from "@/lib/admin-api";
 import AuthorEditForm from "@/components/admin/AuthorEditForm";
@@ -9,7 +9,7 @@ export const metadata = { title: "Editar colaborador — Aurora PE Admin" };
 
 export default async function EditAuthorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const token = (await getAdminToken())!;
+  const token = await requireAdminToken();
 
   let author;
   try {
