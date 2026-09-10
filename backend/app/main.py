@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config import CORS_ORIGINS, DEBUG, MOCK_MODE
@@ -29,13 +30,16 @@ app = FastAPI(
     redoc_url="/redoc" if DEBUG else None,
 )
 
+# Compressão de payload para respostas > 1KB (reduz tráfego de rede em 60-80%)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 origins = [origin.strip() for origin in CORS_ORIGINS.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    # Restringe exclusivamente aos deploys e previews do Aurora PE na Vercel
-    allow_origin_regex=r"^https://aurorape(-[a-zA-Z0-9_-]+)?\.vercel\.app$",
+    # Permite domínios de deploy e preview na Railway e Vercel
+    allow_origin_regex=r"^https://(aurorape(-[a-zA-Z0-9_-]+)?\.vercel\.app|aurorape-.*\.up\.railway\.app)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
